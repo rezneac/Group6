@@ -1,65 +1,58 @@
 import sqlite3
+import os
 from werkzeug.security import generate_password_hash
 
+def load_schema(cursor, schema_file):
+    """Load and execute SQL schema from a file."""
+    with open(schema_file, "r") as f:
+        sql_script = f.read()
+    cursor.executescript(sql_script)
+
 def create_database():
-    # Connect to SQLite3 database (or create it if it doesn't exist)
+    if os.path.exists("savings.db"):
+        os.remove("savings.db")
+    
     conn = sqlite3.connect("savings.db")
     cursor = conn.cursor()
-    
-    # Create User table with password hash
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS User (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
-        email TEXT NOT NULL,
-        name TEXT NOT NULL,
-        password_hash TEXT NOT NULL
-    )
-    """)
-    
-    # Create Contribution table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS Contribution (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL,
-        amount REAL NOT NULL,
-        date TEXT NOT NULL,
-        FOREIGN KEY (username) REFERENCES User(username)
-    )
-    """)
-    
-    # Test users with hashed passwords
+
+    # Load schema from file
+    load_schema(cursor, "schema.sql")
+
+    # Insert savings goals
+    goals = [
+        (1, "Holiday Fund", 1000.00),
+        (2, "New Car Fund", 5000.00)
+    ]
+    cursor.executemany("INSERT OR IGNORE INTO SavingsGoal (id, name, target_amount) VALUES (?, ?, ?)", goals)
+
+    # Test users with hashed passwords, linked to different goals
     users = [
-        ("john_doe", "john@example.com", "John Doe", generate_password_hash("password123")),
-        ("jane_smith", "jane@example.com", "Jane Smith", generate_password_hash("securepass")),
-        ("alice_wonder", "alice@example.com", "Alice Wonder", generate_password_hash("alice123"))
+        ("john_doe", "john@example.com", "John Doe", generate_password_hash("password123"), 1),  # Holiday Fund
+        ("jane_smith", "jane@example.com", "Jane Smith", generate_password_hash("securepass"), 1),  # Holiday Fund
+        ("alice_wonder", "alice@example.com", "Alice Wonder", generate_password_hash("alice123"), 2)  # New Car Fund
     ]
     
-    # Insert users into the User table
-    cursor.executemany("""
-    INSERT OR IGNORE INTO User (username, email, name, password_hash)
-    VALUES (?, ?, ?, ?)
-    """, users)
-    
-    # Test data for contributions
+    cursor.executemany("INSERT OR IGNORE INTO User (username, email, name, password_hash, goal_id) VALUES (?, ?, ?, ?, ?)", users)
+
+    # Get user IDs
+    cursor.execute("SELECT id, username FROM User")
+    user_ids = {row[1]: row[0] for row in cursor.fetchall()}
+
+    # Test contributions
     contributions = [
-        ("john_doe", 100, "2025-02-08"),
-        ("jane_smith", 200, "2025-02-08"),
-        ("alice_wonder", 150, "2025-02-07"),
-        ("john_doe", 50, "2025-02-07")
+        (user_ids["john_doe"], 100, "2025-02-08"),
+        (user_ids["jane_smith"], 200, "2025-02-08"),
+        (user_ids["alice_wonder"], 150, "2025-02-07"),
+        (user_ids["john_doe"], 50, "2025-02-07")
     ]
-    
-    # Insert contributions into the Contribution table
-    cursor.executemany("""
-    INSERT INTO Contribution (username, amount, date)
-    VALUES (?, ?, ?)
-    """, contributions)
-    
-    # Commit changes and close the connection
+
+    cursor.executemany("INSERT INTO Contribution (user_id, amount, date) VALUES (?, ?, ?)", contributions)
+
+    # Commit and close
     conn.commit()
     conn.close()
-    
-    print("Database and tables created successfully with test users and test data.")
+
+    print("Database created successfully with test users, shared goals, and contributions.")
 
 if __name__ == "__main__":
     create_database()

@@ -10,7 +10,13 @@
             margin: 20px;
             background-color: #aaa;
         }
+
+        .progress-and-goal-container {
+            display: flex; align-items: baseline; column-gap: 1em;
+        }
+
         .progress-container {
+            flex-grow: 1;
             width: 100%;
             background-color: #f3f3f3;
             border-radius: 10px;
@@ -25,6 +31,11 @@
             color: white;
             line-height: 30px;
             transition: width 0.5s;
+        }
+        .progress-goal {
+            display: block; 
+            white-space: nowrap; 
+            font-size: larger;
         }
         .username {
             font-weight: bold;
@@ -41,10 +52,21 @@
 
     <!-- Global Stacked Progress Bar -->
     <div class="global-progress-title">Total Savings Progress</div>
-    <div id="global-progress-container" class="progress-container"></div>
 
-    <button>Set New Goal</button> <!-- Set what you are saving for -->
-    <button>Reset Savings</button> <!-- Set how much you are saving. -->
+    <div class="progress-and-goal-container">
+        <div id="global-progress-container" class="progress-container"></div>
+        <div id="global-progress-goal" class="progress-goal">Holiday Fund</div>
+    </div>
+
+    <form action="{{ url_for('set_savings_goal') }}" method="POST">
+        <label for="target_amount">New Savings Goal:</label> <!-- Set how much you are saving. --> 
+        <input type="number" id="target_amount" name="target_amount" min="0.01" step="0.01" required>
+        
+        <button type="submit">Reset Savings</button>
+    </form>
+    
+
+    <button>Update Savings Goal</button> <!-- Set what you are saving for -->
     
     <h2>Individual Contributions</h2>
     <div id="users-container"></div>
@@ -79,18 +101,18 @@
             usersContainer.innerHTML = '';  // Clear previous content
             globalProgressContainer.innerHTML = '';
 
-            let totalGoal = savingsData.reduce((sum, user) => sum + user.goal_amount, 0);
-            let totalSaved = savingsData.reduce((sum, user) => sum + user.saved_amount, 0);
+            let totalGoal = savingsData["goal"]["target_amount"]
+            let totalSaved = savingsData["users"].reduce((sum, user) => sum + user.saved_amount, 0);
 
             // Global stacked progress bar (total savings)
             if (totalSaved > 0) {
-                savingsData.forEach(user => {
+                savingsData["users"].forEach(user => {
                     if (user.saved_amount > 0) {
                         const progressSegment = document.createElement('div');
                         progressSegment.classList.add('progress-bar');
                         progressSegment.style.width = `${(user.saved_amount / totalGoal) * 100}%`;
                         progressSegment.style.backgroundColor = getUserColor(user.username);
-                        progressSegment.textContent = `$${user.saved_amount}`;
+                        progressSegment.textContent = `£${user.saved_amount}`;
                         globalProgressContainer.appendChild(progressSegment);
                     }
                 });
@@ -98,33 +120,47 @@
                 globalProgressContainer.textContent = "No savings yet.";
             }
 
+            document.getElementById("global-progress-goal").textContent = savingsData["goal"]["name"];
+
             // Individual user progress bars
-            savingsData.forEach(user => {
+            savingsData["users"].forEach(user => {
                 const userDiv = document.createElement('div');
                 userDiv.classList.add('user-progress');
 
                 const usernameDiv = document.createElement('div');
                 usernameDiv.classList.add('username');
-                usernameDiv.textContent = `${user.username} - Goal: $${user.goal_amount}, Saved: $${user.saved_amount}`;
+                usernameDiv.textContent = `${user.username} - Goal: £${totalGoal}, Saved: £${user.saved_amount}`;
+
+                const progressAndGoalContainer = document.createElement('div');
+                progressAndGoalContainer.classList.add('progress-and-goal-container');
 
                 const progressContainer = document.createElement('div');
                 progressContainer.classList.add('progress-container');
 
+                const goalText = document.createElement('div');
+                goalText.textContent = savingsData["goal"]["name"];
+                goalText.classList.add("progress-goal");
+
                 if (user.saved_amount > 0) {
+                    console.table(user.contributions);
                     user.contributions.forEach(contrib => {
                         const progressBar = document.createElement('div');
                         progressBar.classList.add('progress-bar');
-                        progressBar.style.width = `${(contrib.amount / user.goal_amount) * 100}%`;
+                        progressBar.style.width = `${(contrib.amount / totalGoal) * 100}%`;
                         progressBar.style.backgroundColor = getUserColor(contrib.username);
-                        progressBar.textContent = `$${contrib.amount}`;
+                        progressBar.textContent = `£${contrib.amount}`;
                         progressContainer.appendChild(progressBar);
                     });
                 } else {
                     progressContainer.textContent = "No savings yet.";
                 }
 
+                progressAndGoalContainer.appendChild(progressContainer);
+                progressAndGoalContainer.appendChild(goalText);
+
+
                 userDiv.appendChild(usernameDiv);
-                userDiv.appendChild(progressContainer);
+                userDiv.appendChild(progressAndGoalContainer);
                 usersContainer.appendChild(userDiv);
             });
         }
