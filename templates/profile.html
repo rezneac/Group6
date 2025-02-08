@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+<style>
+
+    body{
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .topnav{
+        background-color: gray;
+        overflow:hidden;
+
+    }
+
+    .center{
+        display: flex;
+        justify-content: center;
+        <!--width: 50%;
+        margin: auto;-->
+
+    }
+    .bruh{
+        width: 40vw;
+        padding: 10px 50vw;
+
+
+    }
+
+
+    .circle{
+        border-radius: 50%;
+        width:100px;
+        height:100px;
+        object-fit: cover;
+
+    }
+    .topnav a{
+        float: right;
+        background-color: darkgrey;
+        text-decoration:none;
+        padding: 5px;
+        color: white;
+
+    }
+
+    .topnav a:hover{
+        background-color: white;
+        color: black
+
+    }
+
+    h1{
+
+        color: gray;
+
+    h5{
+
+        color: gray;
+
+    }
+
+</style>
+<body>
+    <div class= "topnav">
+        <a href="{{url_for('logout')}}">logout</a>
+        <a href="{{url_for('postpage')}}">post</a>
+        <a href="{{url_for('profile')}}">profile</a>
+        <a href="{{url_for('index')}}">homepage</a>
+    </div>
+
+    <div class="center"><h1>Profile</h1></div>
+    <div class="center">
+        <form method="POST" action="" enctype="multipart/form-data">
+            <label for="files">What you want your pfp to be?</label><br><br>
+            <div class="pfp"><img src="data:image/jpeg;base64, {{ current_user.pfp }}" class="circle"></div>
+            <input type="file" name="file" id="files"><br><br>
+            <input type="submit">
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+</head>
+<style>
+    body{
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .topnav{
+        background-color: gray;
+        overflow:hidden;
+
+    }
+    .scale{
+        width: 60vw
+        height: 30vh
+
+
+    }
+    .divider{
+
+    }
+
+    .post {
+            padding: 10px;
+
+
+            background-color: lightgray;
+    }
+
+    .circlepfp{
+
+
+    }
+
+    .text{
+        font-size:0.8em;
+    }
+
+    .pfp{
+
+        float: left;
+
+    }
+    .circle{
+        border-radius: 50%;
+        width:100px;
+        height:100px;
+        object-fit: cover;
+
+    }
+    .circle1{
+        border-radius: 50%;
+        width:20px;
+        height:20px;
+        object-fit: cover;
+
+    }
+    .post img{
+         padding: 10px 0px;
+
+         width: 100%;
+
+
+    }
+
+    .post a{
+        padding: 10px 0px;
+        width: 40px
+        float: left;
+
+
+
+
+    }
+    .commentsection{
+
+
+
+    }
+    .bruh {
+        padding: 10px 0px;
+
+    }
+
+
+    .center{
+        display: flex;
+        justify-content: center;
+        width: 80%;
+        margin: auto;
+
+
+    }
+    .bruh{
+        width: 40vw;
+        padding: 10px 50vw;
+
+
+    }
+    .topnav a{
+        float: right;
+        background-color: darkgrey;
+        text-decoration:none;
+        padding: 5px;
+        color: white;
+
+    }
+    .topnav p{
+        float: left;
+
+
+
+        color: white;
+
+    }
+    .comment{
+        background-color: white;
+        width:
+    }
+
+    .topnav a:hover{
+        background-color: white;
+        color: black
+
+    }
+
+    h1{
+        font-size:2.5em;
+        color: gray;
+    }
+    h2{
+        font-size:1.75em;
+        color: gray;
+    }
+
+    h5{
+
+        color: gray;
+
+    }
+
+</style>
+<body>
+<div class="text">Welcome <strong>{{ current_user.username }}</strong> to my fake insta <3</div>
+    <div class= "topnav">
+
+        <a href="{{url_for('logout')}}">logout</a>
+        <a href="{{url_for('postpage')}}">post</a>
+        <a href="{{url_for('profile')}}">profile</a>
+        <a href="{{url_for('index')}}">homepage</a>
+
+    </div>
+    <div class="center"><h1>Emanstagram</h1></div>
+    <div class="center"><img src="data:image/jpeg;base64, {{ pfp1.pfp }}" class="circle" style="width: 100px;float:left;" ><br><h2><strong>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ username }}</strong></h2><br></div><br>
+    <div class="center"><strong> followers: 0 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp following: 0</strong></div>
+    <div class="center"><h6><strong> 0 followers LOL because im too lazy to do following etc</strong></h6><br></div><br><br>
+    <div class="center">
+
+
+        <div class="post">
+            {% for post in posts %}
+
+                <img src="data:image/jpeg;base64, {{ post.data }}" style=""><br>
+                <strong>{{ post.pname }}</strong> ‎ {{ post.caption }}<br><br>
+                <form method="POST" action="">
+                    {{form.hidden_tag()}}
+                    {{form.comment}}
+                    {{form.postid(size=1, value=post.id, readonly=true)}}
+                    {{form.submit}}
+                </form>
+
+                <div class="commentsection">
+                    <h3>Comments</h3>
+                    {% for comment in post.comments %}
+                        <div class="">
+                            <div class="pfp"><img src="data:image/jpeg;base64, {{ comment.pfp }}" class="circle1" style="width: 20px;"></div>
+                            <STRONG>&nbsp&nbsp{{ comment.pname }}</STRONG><br>
+                            &nbsp&nbsp{{ comment.comment }}
+
+
+                        </div>
+                        <br>
+                    {% endfor %}
+
+
+
+                </div>
+                <h6>{{ post.postdate }}</h6><br>
+                <div class="comment">‎  </div>
+            {% endfor %}
+
+
+        </div>
+
+
+    </div>
+
+
+</body>
+</html>
