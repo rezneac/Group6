@@ -12,7 +12,7 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row  # Enables dictionary-like row access
     return conn
 
-@app.route('/')
+@app.route('/progress')
 def index():
     """ Serve the savings progress page (if logged in), else redirect to login. """
     if "user" not in session:
