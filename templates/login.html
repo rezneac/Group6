@@ -10,7 +10,7 @@
 <body>
     <header>
         <nav class="navbar">
-            <a href="index" class="logo">SaveSmart</a>
+            <a href="/" class="logo">SaveSmart</a>
             <ul class="nav-links">
                 <li><a href="faqs">FAQs</a></li>
                 <li><a href="login">Login</a></li>
@@ -32,14 +32,14 @@
               </div>
               <button type="submit" class="btn">Login</button>
               <div class="register-link">
-                <p>Don't have an account yet?<a href="signup">Register</a></p>
+                <p>Don't have an account yet? <a href="signup">Register</a></p>
               </div>
             </form>
           </div>
     </loginmain>
 
     <footer>
-        <p>&copy; 2025 PlannerPro. All Rights Reserved.</p>
+        <p>&copy; 2025 SaveSmart. All Rights Reserved.</p>
     </footer>
 
     <script>
@@ -56,9 +56,10 @@
             });
 
             const data = await response.json();
-            alert(data.message || data.error);
             if (response.ok) {
                 window.location.href = "/progress"; // Redirect on successful login
+            } else {
+                alert(data.error);
             }
         });
     </script>
