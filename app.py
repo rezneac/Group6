@@ -103,11 +103,11 @@ def shoppinglist():
                    
                 print(r)
                 obj = json.loads(r)
-                item = Item(name = item.name,
-                            price = item.price,
-                            cart_id=cart_id)
-                dbs.session.add(item)
-                dbs.session.commit()
+                # item = Item(name = item.name,
+                #             price = item.price,
+                #             cart_id=cart_id)
+                # dbs.session.add(item)
+                # dbs.session.commit()
                 
     return render_template("post.html", obj=obj)
 
