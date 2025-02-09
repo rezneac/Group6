@@ -349,12 +349,13 @@ loginmain{
 
 .progress-and-goal-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    align-items: baseline;
     gap: 1rem;
 }
 
 .progress-container {
+    flex-grow: 1;
     width: 80%;
     height: 20px;
     background: rgba(255, 255, 255, 0.3);
