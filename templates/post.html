@@ -50,6 +50,8 @@
 
         color: gray;
         
+    }
+
     h5{
 
         color: gray;
@@ -71,7 +73,27 @@
             <label for="files">What you wanna post?</label><br><br>
             <input type="file" name="file" id="files"><br><br>
             <input type="submit">
-        </form>
+    <div class="center">
+    </div>
+    <br>
+    <br>
+    <div class="center">
+        {% for item in obj.receipt_items %}
+        
+            <STRONG>&nbsp&nbsp{{ item.name }}</STRONG><br><br>
+            {{ item.price }}
+        <br>           
+        {% endfor %}
+    </div>
+    <br>
+    <br>
+    <div class="center">
+        {% for item in obj.alternative_items %}
+        
+            <STRONG>&nbsp&nbsp{{ item.name }}</STRONG><br><br>
+            {{ item.price }}
+        <br>           
+        {% endfor %}
     </div>
 
 </body>

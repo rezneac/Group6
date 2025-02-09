@@ -2,8 +2,9 @@ import base64
 from datetime import datetime
 from google import genai
 from google.genai import types
-client = genai.Client(api_key="keu")
+client = genai.Client(api_key="API_KEY")
 
+import json 
 import PIL.Image
 
 from flask import Flask, render_template, url_for, redirect, request
@@ -34,9 +35,6 @@ loginmanager.login_view = "login"
 def loaduser(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/')
-def home():
-    return render_template("home.html")
 
 class User(dbs.Model, UserMixin):
     id = dbs.Column(dbs.Integer, primary_key=True)
@@ -45,11 +43,31 @@ class User(dbs.Model, UserMixin):
     savings = dbs.Column(dbs.Integer, nullable=False)
     savingsGoal = dbs.Column(dbs.Integer, nullable=False)
 
+class Item(dbs.Model, UserMixin):
+    id = dbs.Column(dbs.Integer, primary_key=True)
+    name = dbs.Column(dbs.String(50), nullable=False)
+    price = dbs.Column(dbs.Integer, nullable=False)
+    cart_id = dbs.Column(dbs.Integer, dbs.ForeignKey('cart.id'))
+
+class Cart(dbs.Model):
+    id = dbs.Column(dbs.Integer, primary_key=True)
+    items = dbs.relationship('item', lazy='dynamic')
+
+@app.route('/')
+def home():
+    return render_template("home.html")
+
+
+
+
+
+
 
 
 @app.route("/post", methods=['GET', 'POST'])
 #@login_required
 def shoppinglist():
+    obj = {}  # Initialize obj to an empty dictionary
     if request.method == 'POST':
         uploadedfile = request.files['file']
 
@@ -67,13 +85,30 @@ def shoppinglist():
                 response = client.models.generate_content(
                     model="gemini-2.0-flash",
                     contents=[
-                        "What is this image? Break down every position also show how many times each product is bought, containing name ,price only and the lowes and highest price of an item! PLEASE GIVE ONLY WHAT I REQUESTED AS A JSON FILE!!! ALSO can you findcheaper alternatives to each item from uk supermarket stores. HOWEVER IF YOU DO NOT RECOGNISE THE IMAGE TO BE A RECIEPT, RETURN AN ERROR JSON",
+                        "What is this image? Break down every position also show how many times each product is bought, containing name and price only! ALSO can you find one cheaper alternative to each item from uk supermarket stores. And make sure when you check for cheaper alternatives you look only to unit price for 1. PLEASE GIVE ONLY WHAT I REQUESTED IN JSON FORMAT WITH NOTHING BEFORE OR AFTER THE START AND END CURLY BRACKETS WITH THE NAMES AND PRICES FROM THE IMAGE AS, receipt_items, AND MAKE SURE YOU CALL THE CHEAPER ITEMS AS, alternative_items, WITH THE ALTERNATIVES' NAMES AND PRICES with a quantity column matching the reciepts one!!! HOWEVER IF YOU DO NOT RECOGNISE THE IMAGE TO BE A RECIEPT, RETURN AN ERROR JSON",
                         image])
 
-                print(response.text)
+                r = response.text
 
-                return redirect(url_for('shoppinglist'))
-
-    return render_template("post.html")
+               
+                for i in range(0,50):
+                    if r[i] == "{":
+                        r = r[i:]
+                        break
+                
+                      
+                r = r[:r.rfind('}')+1]
+                      
+               
+                   
+                print(r)
+                obj = json.loads(r)
+                item = Item(name = item.name,
+                            price = item.price,
+                            cart_id=cart_id)
+                dbs.session.add(item)
+                dbs.session.commit()
+                
+    return render_template("post.html", obj=obj)
 
 app.run(debug=True, port=8000)
