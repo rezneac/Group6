@@ -8,7 +8,6 @@
 
 body {
     line-height: 1.6;
-    background-color: #f9f9fb;
     color: #333;
 }
 
@@ -67,11 +66,13 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 75vh;
+    height: 75vh; /* Or adjust as needed */
     text-align: center;
-    background: linear-gradient(to right, #8c52ff, #ff914d);
+    background: linear-gradient(to right, #8c52ff, #ff914d); /* Gradient background */
     color: #fff;
     padding: 2rem;
+    /* Added overflow hidden */
+    overflow: hidden;
 }
 
 .hero-text {
@@ -146,13 +147,16 @@ header {
 .features {
     text-align: center;
     padding: 3rem;
-    background-color: #fff;
+    background: linear-gradient(to right, #8c52ff, #ff914d);
+    background-color: #f9f9fb;
 }
 
 .features-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+    /* Added margin top */
+    margin-top: -50px; /* Adjust as needed */
 }
 
 .feature-card {
@@ -161,6 +165,11 @@ header {
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Added height and display flex */
+    height: 350px; /* Adjust as needed */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .feature-card:hover {
@@ -174,32 +183,41 @@ header {
     object-fit: cover;
 }
 
+.feature-card h3 {
+    margin-top: 1rem;
+}
+
+.feature-card p {
+    margin-bottom: 1rem;
+}
+
 /* Testimonials */
 .testimonials {
     text-align: center;
     padding: 3rem;
-    background: linear-gradient(to right, #8c52ff, #ff914d); /* Gradient background */
-    color: #fff;
+    background: linear-gradient(to right, #8c52ff, #ff914d);
+    background-color: #f9f9fb;
+    color: #333; /* Changed text color */
 }
 
 .testimonial-container {
-    max-width: 900px; /* Increased width for better layout */
-    margin: 2rem auto; /* Added margin for spacing */
-    display: flex; /* Use flexbox for layout */
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    justify-content: center; /* Center the testimonials */
-    gap: 2rem; /* Space between testimonials */
+    max-width: 900px;
+    margin: 2rem auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
 }
 
 .testimonial {
-    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+    background-color: #fff; /* Changed background color */
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 30%; /* Adjust width as needed */
-    min-width: 300px; /* Minimum width for responsiveness */
-    text-align: left; /* Align text to the left */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+    width: 30%;
+    min-width: 300px;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .testimonial:hover {
@@ -218,6 +236,68 @@ header {
     color: #ffbd84; /* Highlight the name/title */
 }
 
+
+/* Login Section */
+.login-section {
+    display: flex;
+    flex-direction: column; /* Align items vertically */
+    align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically */
+    height: 75vh; /* Or adjust as needed */
+    padding: 2rem;
+    background-color: #f9f9fb; /* Match your main background */
+}
+
+.login-section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333; /* Match your main text color */
+}
+
+.login-section form {
+    display: flex;
+    flex-direction: column;
+    width: 300px; /* Adjust width as needed */
+    gap: 1rem; /* Space between form elements */
+}
+
+.login-section input {
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.login-section button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #1b1b4b; /* Match your button color */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-section button:hover {
+    background-color: #333;
+    color: #ff7b54;
+}
+
+.login-section p {
+    margin-top: 1rem;
+    color: #333;
+}
+
+.login-section a {
+    color: #8c52ff; /* Match your link color */
+    text-decoration: none;
+}
+
+.login-section a:hover {
+    text-decoration: underline;
+}
 /* Footer */
 footer {
     background-color: #1b1b4b;
