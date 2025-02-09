@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipts - SaveSmart</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="{{url_for('index')}}" class="logo">SaveSmart</a>
+            <ul class="nav-links">
+                <li><a href="faqs">FAQs</a></li>
+
+                <li><a href="{{url_for('logout')}}">logout</a></li>
+                <li><a href="{{url_for('shoppinglist')}}">Receipts</a></li>
+                <li><a href="cart" class="cart-icon">🛒</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="receipts">
+            <h2>Receipts Scanner</h2>
+            <p>Enter in your receipt</p>
+            <div class="receipt-form">
+                <form method="POST" action="" enctype="multipart/form-data">
+
+                <input type="file" name="file" id="files"><br>
+                <input type="submit">
+
+            </div>
+            <div class="main">
+                <h3>Your receipt readout</h3>
+                {% for item in obj.receipt_items %}
+
+                <STRONG>&nbsp&nbsp{{ item.name }}</STRONG><br><br>
+                {{ item.price }}
+                <br>
+                {% endfor %}
+
+            </div>
+            <div class="main">
+                <h3>Alternatives</h3>
+                {% for item in obj.alternative_items %}
+
+                <STRONG>&nbsp&nbsp{{ item.name }}</STRONG><br><br>
+                {{ item.price }}
+                <br>
+                {% endfor %}
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 PlannerPro. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

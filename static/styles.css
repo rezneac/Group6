@@ -128,6 +128,21 @@ header {
     width: 200px;
 }
 
+.main{
+    margin: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #1b1b4b;
+    color:white;
+}
+
+.center{
+    display: flex;
+    justify-content: center;
+    width: 50%;
+    margin: auto;
+}
+
 .progress-btn {
     display: inline-block;
     margin-top: 1.5rem;
