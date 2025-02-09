@@ -274,7 +274,7 @@ loginmain{
     width: 420px;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, .2);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(50px);
     color: #fbf8f8;
     border-radius: 12px;
     padding: 30px 40px;
@@ -300,6 +300,7 @@ loginmain{
     font-size: 16px;
     color: #f6f1f1;
     padding: 20px 45px 20px 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
   }
   .input-box input::placeholder{
     color: #f4efef;
@@ -323,6 +324,19 @@ loginmain{
     font-size: 16px;
     color: #333;
     font-weight: 600;
+  }
+  .form .register-link{
+    font-size: 14.5px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  .register-link p a{
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .register-link p a:hover{
+    text-decoration: underline;
   }
 
 /* Responsive Design */
