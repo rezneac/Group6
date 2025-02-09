@@ -10,7 +10,7 @@
 <body>
     <header>
         <nav class="navbar">
-            <a href="index.html" class="logo">PlannerPro</a>
+            <a href="{{url_for('home')}}" class="logo">PlannerPro</a>
             <ul class="nav-links">
                 <li><a href="faqs.html">FAQs</a></li>
                 <li><a href="{{url_for('login')}}">Login</a></li>
@@ -26,7 +26,7 @@
             <div class="hero-text">
                 <h1>Streamline Your Organisation</h1>
                 <h2>Keep track of everything efficiently in one place.</h2>
-                <a href="login.html" class="cta-btn">Get Started</a>
+                <a href="{{url_for('signup')}}" class="cta-btn">Get Started</a>
             </div>
         </section>
 

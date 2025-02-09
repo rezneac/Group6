@@ -2,9 +2,10 @@ import base64
 from datetime import datetime
 from google import genai
 from google.genai import types
+
 client = genai.Client(api_key="API_KEY")
 
-import json 
+import json
 import PIL.Image
 
 from flask import Flask, render_template, url_for, redirect, request
@@ -22,8 +23,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'secretkey'
 app.config['file_extensions'] = ['.jpeg', '.jpg', '.png']
 
-
-
 dbs = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
@@ -31,17 +30,21 @@ loginmanager = LoginManager()
 loginmanager.init_app(app)
 loginmanager.login_view = "login"
 
+
 @loginmanager.user_loader
 def loaduser(user_id):
     return User.query.get(int(user_id))
+
+with app.app_context():
+    dbs.create_all()
 
 
 class User(dbs.Model, UserMixin):
     id = dbs.Column(dbs.Integer, primary_key=True)
     username = dbs.Column(dbs.String(20), nullable=False, unique=True)
     password = dbs.Column(dbs.String(80), nullable=False)
-    savings = dbs.Column(dbs.Integer, nullable=False)
-    savingsGoal = dbs.Column(dbs.Integer, nullable=False)
+    contributions = dbs.relationship('Contribution')
+
 
 class Item(dbs.Model, UserMixin):
     id = dbs.Column(dbs.Integer, primary_key=True)
@@ -51,17 +54,35 @@ class Item(dbs.Model, UserMixin):
 
 
 
+class Contribution(dbs.Model, UserMixin):
+    id = dbs.Column(dbs.Integer, primary_key=True)
+    amount = dbs.Column(dbs.Integer, nullable=False)
+    user_id = dbs.Column(dbs.Integer, dbs.ForeignKey('user.id'), nullable=False)
+
+
+
+class Savings(dbs.Model, UserMixin):
+    id = dbs.Column(dbs.Integer, primary_key=True)
+    hash = dbs.Column(dbs.String(50), nullable=False)
+    name = dbs.Column(dbs.String(50), nullable=False)
+    savingsGoal = dbs.Column(dbs.Integer, nullable=False)
+    contributions = dbs.relationship('contribution', lazy='dynamic')
+
+
 class Cart(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
     items = dbs.relationship('item', lazy='dynamic')
 
+
 with app.app_context():
     dbs.create_all()
+
 
 class commentform(FlaskForm):
     comment = StringField(validators=[InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Comment..."})
     postid = StringField()
     submit = SubmitField("comment")
+
 
 class Registerform(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
@@ -75,6 +96,7 @@ class Registerform(FlaskForm):
         if existingusername:
             raise ValidationError("username already exist you cant use this soz")
 
+
 class Loginform(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)],
                            render_kw={"placeholder": "Username"})
@@ -83,17 +105,21 @@ class Loginform(FlaskForm):
 
     submit = SubmitField("Login")
 
+
 @app.route('/')
 def home():
     return render_template("index.html")
 
-@app.route("/register", methods=['GET', 'POST'])
-def register():
+
+@app.route("/signup", methods=['GET', 'POST'])
+def signup():
     form = Registerform()
+    contribution = Contribution()
+
     if form.validate_on_submit():
         hashedpassword = bcrypt.generate_password_hash(form.password.data)
 
-        newuser = User(username=form.username.data, password=hashedpassword, savings = 0, savingsGoal = 0)
+        newuser = User(username=form.username.data, password=hashedpassword , contributions=[contribution])
         newcart = Cart()
         dbs.session.add(newuser)
         dbs.session.commit()
@@ -101,16 +127,11 @@ def register():
         dbs.session.commit()
         return redirect(url_for('login'))
 
-    return render_template("register.html", form=form)
-
-
-
-
-
+    return render_template("signup.html", form=form)
 
 
 @app.route("/receipt", methods=['GET', 'POST'])
-#@login_required
+@login_required
 def shoppinglist():
     obj = {}  # Initialize obj to an empty dictionary
     saved = Cart.items
@@ -125,7 +146,7 @@ def shoppinglist():
             else:
                 #uploadedfile.save(os.path.join(app.root_path, 'static', 'images', 'reciept.'+file_ext))
                 #newpost = Post(caption=caption, data=data,  pdata=current_user.pfp,
-                  #             pname=current_user.username, postdate=datetime.now().replace(microsecond=0))
+                #             pname=current_user.username, postdate=datetime.now().replace(microsecond=0))
                 image = PIL.Image.open(uploadedfile)
 
                 response = client.models.generate_content(
@@ -136,17 +157,13 @@ def shoppinglist():
 
                 r = response.text
 
-               
-                for i in range(0,50):
+                for i in range(0, 50):
                     if r[i] == "{":
                         r = r[i:]
                         break
-                
-                      
-                r = r[:r.rfind('}')+1]
-                      
-               
-                   
+
+                r = r[:r.rfind('}') + 1]
+
                 print(r)
                 obj = json.loads(r)
                 # item = Item(name = item.name,
@@ -154,8 +171,42 @@ def shoppinglist():
                 #             cart_id=cart_id)
                 # dbs.session.add(item)
                 # dbs.session.commit()
-                
-    return render_template("receipt.html", obj=obj, saved =saved)
+
+    return render_template("receipt.html", obj=obj, saved=saved)
+
+@app.route("/dashboard", methods=['GET', 'POST'])
+#@login_required
+def savings():
+    obj = Savings.query.filter_by(Savings.contributions.contains(User.contributions)).order_by(Savings.name).all()# Initialize obj to an empty dictionary
+
+
+    return render_template("receipt.html", obj=obj, saved=saved)
+@app.route("/dashboard", methods=['GET', 'POST'])
+#@login_required
+def newsavings():
+    obj = {}  # Initialize obj to an empty dictionary
+
+    return render_template("receipt.html", obj=obj, saved=saved)
+
+@app.route("/dashboard", methods=['GET', 'POST'])
+#@login_required
+def addfriendsavings():
+    obj = {}  # Initialize obj to an empty dictionary
+
+    return render_template("receipt.html", obj=obj, saved=saved)
+@app.route("/dashboard", methods=['GET', 'POST'])
+#@login_required
+def deletesavings():
+    obj = {}  # Initialize obj to an empty dictionary
+
+    return render_template("receipt.html", obj=obj, saved=saved)
+
+@app.route("/dashboard", methods=['GET', 'POST'])
+#@login_required
+def contribute():
+    obj = {}  # Initialize obj to an empty dictionary
+
+    return render_template("receipt.html", obj=obj, saved=saved)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -169,10 +220,12 @@ def login():
                 return redirect(url_for('index'))
     return render_template("login1.html", form=form)
 
+
 @app.route("/logout", methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
 
 app.run(debug=True, port=8000)

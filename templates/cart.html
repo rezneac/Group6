@@ -10,10 +10,11 @@
 <body>
     <header>
         <nav class="navbar">
-            <a href="index.html" class="logo">PlannerPro</a>
+            <a href="{{url_for('home')}}" class="logo">PlannerPro</a>
             <ul class="nav-links">
                 <li><a href="faqs.html">FAQs</a></li>
-                <li><a href="login.html">Login</a></li>
+
+                <li><a href="{{url_for('logout')}}">logout</a></li>
                 <li><a href="receipt.html">Receipts</a></li>
                 <li><a href="cart.html" class="cart-icon">🛒</a></li>
             </ul>
