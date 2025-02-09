@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlannerPro</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">PlannerPro</a>
+            <ul class="nav-links">
+                <li><a href="faqs.html">FAQs</a></li>
+                <li><a href="{{url_for('login')}}">Login</a></li>
+                <li><a href="{{url_for('shoppinglist')}}">Receipts</a></li>
+                <li><a href="cart.html" class="cart-icon">🛒</a></li>
+            </ul>
+            <div class="hamburger">☰</div>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <div class="hero-text">
+                <h1>Streamline Your Organisation</h1>
+                <h2>Keep track of everything efficiently in one place.</h2>
+                <a href="login.html" class="cta-btn">Get Started</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>Core Features</h2>
+            <div class="features-container">
+                <div class="feature-card">
+                    <img src="images/organize.jpg" alt="Organization">
+                    <h3>Smart Organization</h3>
+                    <p>Manage all your documents and receipts effortlessly.</p>
+                </div>
+                <div class="feature-card">
+                    <img src="images/track.jpg" alt="Tracking">
+                    <h3>Seamless Tracking</h3>
+                    <p>Monitor your records with an intuitive interface.</p>
+                </div>
+                <div class="feature-card">
+                    <img src="images/efficiency.jpg" alt="Efficiency">
+                    <h3>Boost Efficiency</h3>
+                    <p>Save time with automated categorisation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials">
+          <h2>What Students Say</h2>
+          <div class="testimonial-container">
+              <div class="testimonial">
+                  <p>"I love how easy it is to manage my expenses and organize my digital receipts. Highly recommended!"</p>
+                  <h4>- James M., University of Leicester</h4>
+              </div>
+              <div class="testimonial">
+                  <p>"A must-have tool for students who want to stay on top of their work without stress!"</p>
+                  <h4>- Priya K., Warwick University</h4>
+              </div>
+          </div>
+      </section>
+  </main>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 PlannerPro. All Rights Reserved.</p>
+        <ul class="footer-links">
+            <li><a href="faqs.html">FAQs</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </footer>
+    
+    <script>
+        $(document).ready(function(){
+            $('.hamburger').click(function(){
+                $('.nav-links').toggleClass('active');
+            });
+        });
+    </script>
+</body>
+</html>

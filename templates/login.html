@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PlannerPro</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">PlannerPro</a>
+            <ul class="nav-links">
+                <li><a href="faqs.html">FAQs</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="receipt.html">Receipts</a></li>
+                <li><a href="cart.html" class="cart-icon">🛒</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="login-section">
+            <h2>Login to PlannerPro</h2>
+            <form method="POST" action="">
+                {{form.hidden_tag()}}
+                {{form.username}}<br><br>
+                {{form.password}}<br><br>
+                {{form.submit}}
+            </form>
+            <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 PlannerPro. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
