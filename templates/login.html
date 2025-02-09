@@ -3,19 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - PlannerPro</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <h2>Login</h2>
-    <form id="loginForm">
-        <label for="username">Username:</label>
-        <input type="text" id="username" required><br>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">PlannerPro</a>
+            <ul class="nav-links">
+                <li><a href="faqs.html">FAQs</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="progress.html">Progress</a></li>
+                <li><a href="cart.html" class="cart-icon">🛒</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" required><br>
+    <loginmain>
+        <div class="form" id="loginForm">
+            <form action="">
+              <h1>Login</h1>
+              <div class="input-box">
+                <input id="username" type="text" placeholder="Username" required>
+                <i class='bx bxs-user'></i>
+              </div>
+              <div class="input-box">
+                <input id="password" type="password" placeholder="Password" required>
+                <i class='bx bxs-lock-alt' ></i>
+              </div>
+              <button type="submit" class="btn">Login</button>
+              <div class="register-link">
+                <p>Don't have an account yet?<a href="signup.html">Register</a></p>
+              </div>
+            </form>
+          </div>
+    </loginmain>
 
-        <button type="submit">Login</button>
-    </form>
+    <footer>
+        <p>&copy; 2025 PlannerPro. All Rights Reserved.</p>
+    </footer>
 
     <script>
         document.getElementById("loginForm").addEventListener("submit", async function(event) {
@@ -33,7 +60,7 @@
             const data = await response.json();
             alert(data.message || data.error);
             if (response.ok) {
-                window.location.href = "/"; // Redirect on successful login
+                window.location.href = "/progress"; // Redirect on successful login
             }
         });
     </script>

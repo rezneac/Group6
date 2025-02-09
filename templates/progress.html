@@ -3,14 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Savings Progress</title>
+    <title>SaveSmart - Savings Progress</title>
+    <link rel="stylesheet" href="static/styles.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #aaa;
-        }
-
         .progress-and-goal-container {
             display: flex; align-items: baseline; column-gap: 1em;
         }
@@ -48,28 +43,49 @@
     </style>
 </head>
 <body>
-    <h1>Savings Progress</h1>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">PlannerPro</a>
+            <ul class="nav-links">
+                <li><a href="faqs.html">FAQs</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="progress.html">Progress</a></li>
+                <li><a href="cart.html" class="cart-icon">🛒</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <!-- Global Stacked Progress Bar -->
-    <div class="global-progress-title">Total Savings Progress</div>
+    <main>
+        <h1>Savings Progress</h1>
 
-    <div class="progress-and-goal-container">
-        <div id="global-progress-container" class="progress-container"></div>
-        <div id="global-progress-goal" class="progress-goal">Holiday Fund</div>
-    </div>
+        <!-- Global Stacked Progress Bar -->
+        <div class="global-progress-title">Total Savings Progress</div>
 
-    <form action="{{ url_for('set_savings_goal') }}" method="POST">
-        <label for="target_amount">New Savings Goal:</label> <!-- Set how much you are saving. --> 
-        <input type="number" id="target_amount" name="target_amount" min="0.01" step="0.01" required>
+        <div class="progress-and-goal-container">
+            <div id="global-progress-container" class="progress-container"></div>
+            <div id="global-progress-goal" class="progress-goal">Holiday Fund</div>
+        </div>
+
+        <form action="{{ url_for('set_savings_goal') }}" method="POST">
+            <label for="target_amount">New Savings Goal:</label> <!-- Set how much you are saving. --> 
+            <input type="number" id="target_amount" name="target_amount" min="0.01" step="0.01" required>
+            
+            <button type="submit">Reset Savings</button>
+        </form>
+
+        <button>Update Savings Goal</button> <!-- Set what you are saving for -->
         
-        <button type="submit">Reset Savings</button>
-    </form>
-    
+        <h2>Individual Contributions</h2>
+        <div id="users-container"></div>
+    </main>
 
-    <button>Update Savings Goal</button> <!-- Set what you are saving for -->
-    
-    <h2>Individual Contributions</h2>
-    <div id="users-container"></div>
+    <footer>
+        <p>&copy; 2025 SaveSmart. All Rights Reserved.</p>
+        <ul class="footer-links">
+            <li><a href="faqs.html">FAQs</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </footer>
 
     <script>
         // Generate a consistent color for each user
