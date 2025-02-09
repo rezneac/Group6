@@ -221,6 +221,7 @@
 
             let totalGoal = savingsData["goal"]["target_amount"]
             let totalSaved = savingsData["users"].reduce((sum, user) => sum + user.saved_amount, 0);
+            console.log(savingsData);
 
             document.getElementById("share_code").value = savingsData["goal"]["id"];
             // Global stacked progress bar (total savings)
@@ -261,7 +262,6 @@
                 goalText.classList.add("progress-goal");
 
                 if (user.saved_amount > 0) {
-                    console.table(user.contributions);
                     user.contributions.forEach(contrib => {
                         const progressBar = document.createElement('div');
                         progressBar.classList.add('progress-bar');

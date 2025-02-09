@@ -1,195 +1,182 @@
-from flask import Flask, render_template, jsonify, request, redirect, session
-import sqlite3
+import os
+import PIL
+import json
+import google.generativeai as genai
+
+from flask import Flask, render_template, jsonify, request, redirect, session, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
+
+from models import User, SavingsGoal, Contribution, Cart, Item, db
+
+genai.configure(api_key="AIzaSyBPlLN0RvHJQlCB8mBFVzE0aHCQlX_HFVg")
+client = genai.GenerativeModel('gemini-2.0-flash')
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = "super_secret_key"  # Change this in production!
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///savings.db'
+app.config['SECRET_KEY'] = 'super_secret_key'  # Change this in production!
+app.config['file_extensions'] = ['.jpeg', '.jpg', '.png']
 
-# Connect to SQLite database
-def get_db_connection():
-    conn = sqlite3.connect('savings.db')
-    conn.row_factory = sqlite3.Row  # Enables dictionary-like row access
-    return conn
+db.init_app(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = "login"
 
-@app.route('/progress')
-def progress():
-    """ Serve the savings progress page (if logged in), else redirect to login. """
-    if "user" not in session:
-        return redirect("/login")
-    return render_template('progress.html')
+### Authentication Navigation Routes
 
-## Savings Routes
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
-@app.route('/set_goal/', methods=['POST'])
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    username = data.get("username")
+    email = data.get("email")
+    password = data.get("password")
+
+    if not username or not email or not password:
+        return jsonify({"error": "Missing fields"}), 400
+
+    password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    new_user = User(username=username, email=email, password_hash=password_hash)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"message": "User registered successfully"}), 201
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template("login.html")  # Serve login form
+
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+    user = User.query.filter_by(username=username).first()
+
+    if user and bcrypt.check_password_hash(user.password_hash, password):
+        login_user(user)
+        return jsonify({"message": "Login successful"}), 200
+    return jsonify({"error": "Invalid username or password"}), 401
+
+@app.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+### Savings Goals Navigation Routes
+
+@app.route('/set_goal', methods=['POST'])
+@login_required
 def set_goal():
-    # Ensure the user is logged in
-    if 'user' not in session:
-        return jsonify({"error": "You must be logged in to set a goal."}), 400
-
-    user_name = session['user']  # Assuming 'user' session holds username.
-
-    # Connect to the database
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT id FROM User WHERE username = ?", (user_name,))
-    user_id = cursor.fetchone()['id']
-    print(user_id)
-
-    # Get the new goal name from the request.
     goal_name = request.form.get('goal_name')
-    
-    # Get the new target amount from the request
     target_amount = request.form.get('target_amount')
 
     if not target_amount or float(target_amount) <= 0:
         return jsonify({"error": "Please provide a valid target amount."}), 400
 
     target_amount = float(target_amount)
+    existing_goal = current_user.goal
 
-    # Check if the user already has an associated goal
-    cursor.execute("SELECT goal_id FROM User WHERE id = ?", (user_id,))
-    existing_goal_id = cursor.fetchone()
-    print(user_id)
-
-    if existing_goal_id and existing_goal_id[0]:
-        # If a goal already exists, update it
-        cursor.execute("UPDATE SavingsGoal SET name = ?, target_amount = ? WHERE id = ?", 
-                       (goal_name, target_amount, existing_goal_id[0]))
-    else:    
-        # If no goal exists, create a new one and associate with the user
-        cursor.execute("INSERT INTO SavingsGoal (name, target_amount) VALUES (?, ?)",
-                       (goal_name, target_amount))  # Adjust goal name as necessary
-        goal_id = cursor.lastrowid
-        cursor.execute("UPDATE User SET goal_id = ? WHERE id = ?", (goal_id, user_id))
-
-    # Commit changes and close connection
-    conn.commit()
-    conn.close()
-
+    if existing_goal:
+        existing_goal.name = goal_name
+        existing_goal.target_amount = target_amount
+    else:
+        new_goal = SavingsGoal(name=goal_name, target_amount=target_amount)
+        db.session.add(new_goal)
+        current_user.goal = new_goal
+    
+    db.session.commit()
     return redirect("/progress")
 
 @app.route('/add_contribution', methods=['POST'])
+@login_required
 def add_contribution():
-    # Ensure the user is logged in
-    if 'user' not in session:
-        return jsonify({"error": "You must be logged in to set a goal."}), 400
-
-    user_name = session['user']  # Assuming 'user' session holds username.
-
-    # Connect to the database
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT id FROM User WHERE username = ?", (user_name,))
-    user_id = cursor.fetchone()['id']
-    print(user_id)
-    
-    # Get the new contribution amount from the request
     contribution_amount = request.form.get('contribution_amount')
 
     if not contribution_amount or float(contribution_amount) <= 0:
         return jsonify({"error": "Please provide a valid contribution amount."}), 400
 
-    contribution_amount = float(contribution_amount)
-
-    # Get new date for this contribution
-    current_date = datetime.now()
-
-    # Create a new goal and associate with the user
-    cursor.execute("INSERT INTO Contribution (user_id, amount, date) VALUES (?, ?, ?)",
-                    (user_id, contribution_amount, current_date))  # Adjust goal name as necessary
-    
-    # Commit changes and close connection
-    conn.commit()
-    conn.close()
-
+    contribution = Contribution(user=current_user, amount=float(contribution_amount))
+    db.session.add(contribution)
+    db.session.commit()
     return redirect("/progress")
 
-
-
-@app.route('/savings/', methods=['GET'])
+@app.route('/savings', methods=['GET'])
+@login_required
 def get_savings_by_user():
-    """ Fetch all users sharing the same savings goal as the given user. """
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    username = session["user"]
-
-    # Fetch the user's savings goal
-    cursor.execute("""
-        SELECT SavingsGoal.id, SavingsGoal.name, SavingsGoal.target_amount
-        FROM User 
-        JOIN SavingsGoal ON User.goal_id = SavingsGoal.id
-        WHERE User.username = ?
-    """, (username,))
-    
-    goal = cursor.fetchone()
-
+    goal = current_user.goal
     if not goal:
-        conn.close()
-        return jsonify({"error": "User not found or no savings goal assigned"}), 404
+        return jsonify({"error": "User has no savings goal assigned"}), 404
 
-    goal_id, goal_name, target_amount = goal
-
-    # Fetch all users who share this goal
-    cursor.execute("""
-        SELECT id, username FROM User WHERE goal_id = ?
-    """, (goal_id,))
-    
-    users = cursor.fetchall()
-
-    # Fetch total contributions for each user
-    user_savings = []
-    for user in users:
-        user_id, user_name = user
-
-        cursor.execute("""
-            SELECT COALESCE(SUM(amount), 0) AS total_saved 
-            FROM Contribution 
-            WHERE user_id = ?
-        """, (user_id,))
-        
-        total_saved = cursor.fetchone()["total_saved"]
-
-        cursor.execute("""
-            SELECT *
-            FROM Contribution, User
-            WHERE user_id = ? AND Contribution.user_id = User.id
-        """, (user_id,))
-
-        contributions = list(map(dict, cursor.fetchall()))
-
-        user_savings.append({
-            "username": user_name,
-            "saved_amount": total_saved,
-            "progress": (total_saved / target_amount * 100) if target_amount else 0,
-            "contributions": contributions,
-        })
-
-    conn.close()
+    users = User.query.filter_by(goal_id=goal.id).all()
+    user_savings = [{
+        "username": user.username,
+        "saved_amount": sum(c.amount for c in user.contributions),
+        "progress": sum(c.amount for c in user.contributions) / goal.target_amount * 100 if goal.target_amount else 0,
+        "contributions": [{"amount": c.amount, "date": c.date, "username": c.user.username} for c in user.contributions]
+    } for user in users]
 
     return jsonify({
-        "goal": {
-            "id": goal_id,
-            "name": goal_name,
-            "target_amount": target_amount
-        },
+        "goal": {"id": goal.id, "name": goal.name, "target_amount": goal.target_amount},
         "users": user_savings
     }), 200
 
+### Receipt Navigation Routes
 
-### General Navigation Routes ####
+@app.route("/receipt", methods=['GET', 'POST'])
+@login_required
+def shoppinglist():
+    obj = {}  # Initialize obj to an empty dictionary
+    saved = Cart.items
+    if request.method == 'POST':
+        uploadedfile = request.files['file']
+
+        filename = uploadedfile.filename
+        if filename != "":
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in app.config['file_extensions']:
+                return redirect(url_for('shoppinglist'))
+            else:
+                #uploadedfile.save(os.path.join(app.root_path, 'static', 'images', 'reciept.'+file_ext))
+                #newpost = Post(caption=caption, data=data,  pdata=current_user.pfp,
+                #             pname=current_user.username, postdate=datetime.now().replace(microsecond=0))
+                image = PIL.Image.open(uploadedfile)
+
+                response = client.generate_content(
+                    contents=[
+                        "What is this image? Break down every position also show how many times each product is bought, containing name and price only! ALSO can you find one cheaper alternative to each item from uk supermarket stores. And make sure when you check for cheaper alternatives you look only to unit price for 1. PLEASE GIVE ONLY WHAT I REQUESTED IN JSON FORMAT WITH NOTHING BEFORE OR AFTER THE START AND END CURLY BRACKETS WITH THE NAMES AND PRICES FROM THE IMAGE AS, receipt_items, AND MAKE SURE YOU CALL THE CHEAPER ITEMS AS, alternative_items, WITH THE ALTERNATIVES' NAMES AND PRICES with a quantity column matching the reciepts one!!! HOWEVER IF YOU DO NOT RECOGNISE THE IMAGE TO BE A RECIEPT, RETURN AN ERROR JSON",
+                        image])
+
+                r = response.text
+
+                for i in range(0, 50):
+                    if r[i] == "{":
+                        r = r[i:]
+                        break
+
+                r = r[:r.rfind('}') + 1]
+
+                print(r)
+                obj = json.loads(r)
+                # item = Item(name = item.name,
+                #             price = item.price,
+                #             cart_id=cart_id)
+                # dbs.session.add(item)
+                # dbs.session.commit()
+
+    return render_template("receipt.html", obj=obj, saved=saved)
+
+### General Navigation Routes
 
 @app.route('/', methods=['GET'])
 def index():
     return render_template("index.html")
-
-@app.route('/cart', methods=['GET'])
-def cart():
-    return render_template("cart.html")
 
 @app.route('/faqs', methods=['GET'])
 def faqs():
@@ -199,62 +186,19 @@ def faqs():
 def signup():
     return render_template("signup.html")
 
-### --- Authentication Routes --- ###
+@app.route('/cart', methods=['GET'])
+@login_required
+def cart():
+    return render_template("cart.html")
 
-@app.route('/register', methods=['POST'])
-def register():
-    """ Register a new user with a hashed password. """
-    data = request.json
-    username = data.get("username")
-    email = data.get("email")
-    password = data.get("password")
+@app.route('/progress')
+@login_required
+def progress():
+    """ Serve the savings progress page (if logged in), else redirect to login. """
+    return render_template('progress.html')
 
-    if not username or not email or not password:
-        return jsonify({"error": "Missing fields"}), 400
-
-    password_hash = generate_password_hash(password)
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("INSERT INTO User (username, email, name, password_hash) VALUES (?, ?, ?, ?)",
-                       (username, email, username, password_hash))
-        conn.commit()
-        return jsonify({"message": "User registered successfully"}), 201
-    except sqlite3.IntegrityError:
-        return jsonify({"error": "Username already exists"}), 400
-    finally:
-        conn.close()
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    """ Login route - validates user and starts session. """
-    if request.method == 'GET':
-        return render_template("login.html")  # Serve login form
-
-    data = request.json
-    username = data.get("username")
-    password = data.get("password")
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM User WHERE username = ?", (username,))
-    user = cursor.fetchone()
-    conn.close()
-
-    print(dict(user))
-
-    if user and check_password_hash(user["password_hash"], password):
-        session["user"] = username
-        return jsonify({"message": "Login successful"}), 200
-    else:
-        return jsonify({"error": "Invalid username or password"}), 401
-
-@app.route('/logout', methods=['GET'])
-def logout():
-    """ Logout the user and clear the session. """
-    session.pop("user", None)
-    return redirect("/login")
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)

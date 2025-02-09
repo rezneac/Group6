@@ -1,58 +1,50 @@
-import sqlite3
 import os
+from app import bcrypt
 from werkzeug.security import generate_password_hash
+from models import db, User, SavingsGoal, Contribution
+from flask import Flask
+from datetime import datetime
 
-def load_schema(cursor, schema_file):
-    """Load and execute SQL schema from a file."""
-    with open(schema_file, "r") as f:
-        sql_script = f.read()
-    cursor.executescript(sql_script)
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///savings.db'
+app.config['SECRET_KEY'] = 'super_secret_key'  # Change this in production!
+db.init_app(app)
 
 def create_database():
-    if os.path.exists("savings.db"):
-        os.remove("savings.db")
-    
-    conn = sqlite3.connect("savings.db")
-    cursor = conn.cursor()
+    with app.app_context():
+        db.create_all()
 
-    # Load schema from file
-    load_schema(cursor, "schema.sql")
+        # Insert savings goals
+        goals = [
+            SavingsGoal(id=1, name="Holiday Fund", target_amount=1000.00),
+            SavingsGoal(id=2, name="New Car Fund", target_amount=5000.00)
+        ]
+        db.session.bulk_save_objects(goals)
+        db.session.commit()
 
-    # Insert savings goals
-    goals = [
-        (1, "Holiday Fund", 1000.00),
-        (2, "New Car Fund", 5000.00)
-    ]
-    cursor.executemany("INSERT OR IGNORE INTO SavingsGoal (id, name, target_amount) VALUES (?, ?, ?)", goals)
+        # Test users with hashed passwords, linked to different goals
+        users = [
+            User(username="john_doe", email="john@example.com", password_hash=bcrypt.generate_password_hash("password123").decode('utf-8'), goal_id=1),
+            User(username="jane_smith", email="jane@example.com", password_hash=bcrypt.generate_password_hash("securepass").decode('utf-8'), goal_id=1),
+            User(username="alice_wonder", email="alice@example.com", password_hash=bcrypt.generate_password_hash("alice123").decode('utf-8'), goal_id=2)
+        ]
+        db.session.bulk_save_objects(users)
+        db.session.commit()
 
-    # Test users with hashed passwords, linked to different goals
-    users = [
-        ("john_doe", "john@example.com", "John Doe", generate_password_hash("password123"), 1),  # Holiday Fund
-        ("jane_smith", "jane@example.com", "Jane Smith", generate_password_hash("securepass"), 1),  # Holiday Fund
-        ("alice_wonder", "alice@example.com", "Alice Wonder", generate_password_hash("alice123"), 2)  # New Car Fund
-    ]
-    
-    cursor.executemany("INSERT OR IGNORE INTO User (username, email, name, password_hash, goal_id) VALUES (?, ?, ?, ?, ?)", users)
+        # Get user IDs
+        user_ids = {user.username: user.id for user in User.query.all()}
 
-    # Get user IDs
-    cursor.execute("SELECT id, username FROM User")
-    user_ids = {row[1]: row[0] for row in cursor.fetchall()}
+        # Test contributions
+        contributions = [
+            Contribution(user_id=user_ids["john_doe"], amount=100, date=datetime(2025, 2, 8)),
+            Contribution(user_id=user_ids["jane_smith"], amount=200, date=datetime(2025, 2, 8)),
+            Contribution(user_id=user_ids["alice_wonder"], amount=150, date=datetime(2025, 2, 7)),
+            Contribution(user_id=user_ids["john_doe"], amount=50, date=datetime(2025, 2, 7))
+        ]
+        db.session.bulk_save_objects(contributions)
+        db.session.commit()
 
-    # Test contributions
-    contributions = [
-        (user_ids["john_doe"], 100, "2025-02-08"),
-        (user_ids["jane_smith"], 200, "2025-02-08"),
-        (user_ids["alice_wonder"], 150, "2025-02-07"),
-        (user_ids["john_doe"], 50, "2025-02-07")
-    ]
-
-    cursor.executemany("INSERT INTO Contribution (user_id, amount, date) VALUES (?, ?, ?)", contributions)
-
-    # Commit and close
-    conn.commit()
-    conn.close()
-
-    print("Database created successfully with test users, shared goals, and contributions.")
+        print("Database created successfully with test users, shared goals, and contributions.")
 
 if __name__ == "__main__":
     create_database()
