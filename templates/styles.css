@@ -262,7 +262,7 @@ footer {
     color: #fff;
 }
 /* login page */
-main{
+loginmain{
     display: flex;
     justify-content: center;
     align-items: center;
