@@ -49,13 +49,59 @@ class Item(dbs.Model, UserMixin):
     price = dbs.Column(dbs.Integer, nullable=False)
     cart_id = dbs.Column(dbs.Integer, dbs.ForeignKey('cart.id'))
 
+
+
 class Cart(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
     items = dbs.relationship('item', lazy='dynamic')
 
+with app.app_context():
+    dbs.create_all()
+
+class commentform(FlaskForm):
+    comment = StringField(validators=[InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Comment..."})
+    postid = StringField()
+    submit = SubmitField("comment")
+
+class Registerform(FlaskForm):
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField("Register")
+
+    def validusername(self, username):
+        existingusername = User.query.filter_by(username=username.data).first()
+
+        if existingusername:
+            raise ValidationError("username already exist you cant use this soz")
+
+class Loginform(FlaskForm):
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)],
+                           render_kw={"placeholder": "Username"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)],
+                             render_kw={"placeholder": "Password"})
+
+    submit = SubmitField("Login")
+
 @app.route('/')
 def home():
-    return render_template("home.html")
+    return render_template("index.html")
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = Registerform()
+    if form.validate_on_submit():
+        hashedpassword = bcrypt.generate_password_hash(form.password.data)
+
+        newuser = User(username=form.username.data, password=hashedpassword, savings = 0, savingsGoal = 0)
+        newcart = Cart()
+        dbs.session.add(newuser)
+        dbs.session.commit()
+        dbs.session.add(newcart)
+        dbs.session.commit()
+        return redirect(url_for('login'))
+
+    return render_template("register.html", form=form)
 
 
 
@@ -63,11 +109,11 @@ def home():
 
 
 
-
-@app.route("/post", methods=['GET', 'POST'])
+@app.route("/receipt", methods=['GET', 'POST'])
 #@login_required
 def shoppinglist():
     obj = {}  # Initialize obj to an empty dictionary
+    saved = Cart.items
     if request.method == 'POST':
         uploadedfile = request.files['file']
 
@@ -109,6 +155,24 @@ def shoppinglist():
                 # dbs.session.add(item)
                 # dbs.session.commit()
                 
-    return render_template("post.html", obj=obj)
+    return render_template("receipt.html", obj=obj, saved =saved)
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    form = Loginform()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+
+                return redirect(url_for('index'))
+    return render_template("login1.html", form=form)
+
+@app.route("/logout", methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 app.run(debug=True, port=8000)
