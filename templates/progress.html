@@ -69,14 +69,19 @@
             <div id="global-progress-goal" class="progress-goal">Holiday Fund</div>
         </div>
 
-        <form action="{{ url_for('set_savings_goal') }}" method="POST">
-            <label for="target_amount">New Savings Goal:</label> <!-- Set how much you are saving. --> 
+        <form action="{{ url_for('set_goal_amount') }}" method="POST">
+            <label for="target_amount">Savings Amount</label> <!-- Set how much you are saving. --> 
             <input type="number" id="target_amount" name="target_amount" min="0.01" step="0.01" required>
             
-            <button type="submit">Reset Savings</button>
+            <button type="submit">Update Savings Amount</button>
         </form>
 
-        <button>Update Savings Goal</button> <!-- Set what you are saving for -->
+        <form action="{{ url_for('set_goal_name')}}" method="POST">
+            <label for="goal_name">Savings Goal</label>
+            <input type="text" id="goal_name" name="goal_name" required>
+
+            <button type="submit">Update Savings Goal</button> <!-- Set what you are saving for -->
+        </form>
         
         <h2>Individual Contributions</h2>
         <div id="users-container"></div>

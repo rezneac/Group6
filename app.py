@@ -21,8 +21,8 @@ def progress():
 
 ## Savings Routes
 
-@app.route('/set_goal/', methods=['POST'])
-def set_savings_goal():
+@app.route('/set_goal_amount/', methods=['POST'])
+def set_goal_amount():
     # Ensure the user is logged in
     if 'user' not in session:
         return jsonify({"error": "You must be logged in to set a goal."}), 400
@@ -54,6 +54,49 @@ def set_savings_goal():
         # If a goal already exists, update it
         cursor.execute("UPDATE SavingsGoal SET target_amount = ? WHERE id = ?", 
                        (target_amount, existing_goal_id[0]))
+    else:
+        return jsonify({"error": "Error goal does not exist."}), 400
+    
+        # If no goal exists, create a new one and associate with the user
+        cursor.execute("INSERT INTO SavingsGoal (name, target_amount) VALUES (?, ?)",
+                       ('Default Goal', target_amount))  # Adjust goal name as necessary
+        goal_id = cursor.lastrowid
+        cursor.execute("UPDATE User SET goal_id = ? WHERE id = ?", (goal_id, user_id))
+
+    # Commit changes and close connection
+    conn.commit()
+    conn.close()
+
+    return redirect("/progress")
+
+@app.route('/set_goal_name/', methods=['POST'])
+def set_goal_name():
+    # Ensure the user is logged in
+    if 'user' not in session:
+        return jsonify({"error": "You must be logged in to set a goal."}), 400
+
+    user_name = session['user']  # Assuming 'user' session holds username.
+
+    # Connect to the database
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id FROM User WHERE username = ?", (user_name,))
+    user_id = cursor.fetchone()['id']
+    print(user_id)
+
+    # Get the new target amount from the request
+    goal_name = request.form.get('goal_name')
+
+    # Check if the user already has an associated goal
+    cursor.execute("SELECT goal_id FROM User WHERE id = ?", (user_id,))
+    existing_goal_id = cursor.fetchone()
+    print(user_id)
+
+    if existing_goal_id and existing_goal_id[0]:
+        # If a goal already exists, update it
+        cursor.execute("UPDATE SavingsGoal SET name = ? WHERE id = ?", 
+                       (goal_name, existing_goal_id[0]))
     else:
         return jsonify({"error": "Error goal does not exist."}), 400
     
