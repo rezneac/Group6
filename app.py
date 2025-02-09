@@ -13,11 +13,13 @@ def get_db_connection():
     return conn
 
 @app.route('/progress')
-def index():
+def progress():
     """ Serve the savings progress page (if logged in), else redirect to login. """
     if "user" not in session:
         return redirect("/login")
     return render_template('progress.html')
+
+## Savings Routes
 
 @app.route('/set_goal/', methods=['POST'])
 def set_savings_goal():
@@ -65,7 +67,7 @@ def set_savings_goal():
     conn.commit()
     conn.close()
 
-    return redirect("/")
+    return redirect("/progress")
 
 @app.route('/savings/', methods=['GET'])
 def get_savings_by_user():
@@ -136,6 +138,25 @@ def get_savings_by_user():
         },
         "users": user_savings
     }), 200
+
+
+### General Navigation Routes ####
+
+@app.route('/', methods=['GET'])
+def index():
+    return render_template("index.html")
+
+@app.route('/cart', methods=['GET'])
+def cart():
+    return render_template("cart.html")
+
+@app.route('/faqs', methods=['GET'])
+def faqs():
+    return render_template("faqs.html")
+
+@app.route('/signup', methods=['GET'])
+def signup():
+    return render_template("signup.html")
 
 ### --- Authentication Routes --- ###
 
