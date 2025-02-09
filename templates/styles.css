@@ -178,19 +178,44 @@ header {
 .testimonials {
     text-align: center;
     padding: 3rem;
-    background-color: #a9a9f1;
+    background: linear-gradient(to right, #8c52ff, #ff914d); /* Gradient background */
     color: #fff;
 }
 
 .testimonial-container {
-    max-width: 600px;
-    margin: auto;
+    max-width: 900px; /* Increased width for better layout */
+    margin: 2rem auto; /* Added margin for spacing */
+    display: flex; /* Use flexbox for layout */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: center; /* Center the testimonials */
+    gap: 2rem; /* Space between testimonials */
 }
 
 .testimonial {
+    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 30%; /* Adjust width as needed */
+    min-width: 300px; /* Minimum width for responsiveness */
+    text-align: left; /* Align text to the left */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+}
+
+.testimonial:hover {
+    transform: translateY(-5px); /* Lift up on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+}
+
+.testimonial p {
     font-style: italic;
-    font-size: 1.2rem;
-    margin: 1rem 0;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.testimonial h4 {
+    font-weight: bold;
+    color: #ffbd84; /* Highlight the name/title */
 }
 
 /* Footer */
