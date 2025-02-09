@@ -339,6 +339,42 @@ loginmain{
     text-decoration: underline;
   }
 
+
+  .progress-and-goal-container {
+    display: flex; align-items: baseline; column-gap: 1em;
+}
+
+.progress-container {
+    flex-grow: 1;
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    height: 30px;
+    margin-bottom: 20px;
+}
+.progress-bar {
+    height: 30px;
+    text-align: center;
+    color: white;
+    line-height: 30px;
+    transition: width 0.5s;
+}
+.progress-goal {
+    display: block; 
+    white-space: nowrap; 
+    font-size: larger;
+}
+.username {
+    font-weight: bold;
+}
+.global-progress-title {
+    margin-top: 40px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .hero h1 {
