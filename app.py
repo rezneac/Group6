@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request, redirect, session
 import sqlite3
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Initialize Flask app
@@ -21,8 +22,8 @@ def progress():
 
 ## Savings Routes
 
-@app.route('/set_goal_amount/', methods=['POST'])
-def set_goal_amount():
+@app.route('/set_goal/', methods=['POST'])
+def set_goal():
     # Ensure the user is logged in
     if 'user' not in session:
         return jsonify({"error": "You must be logged in to set a goal."}), 400
@@ -37,6 +38,9 @@ def set_goal_amount():
     user_id = cursor.fetchone()['id']
     print(user_id)
 
+    # Get the new goal name from the request.
+    goal_name = request.form.get('goal_name')
+    
     # Get the new target amount from the request
     target_amount = request.form.get('target_amount')
 
@@ -52,14 +56,12 @@ def set_goal_amount():
 
     if existing_goal_id and existing_goal_id[0]:
         # If a goal already exists, update it
-        cursor.execute("UPDATE SavingsGoal SET target_amount = ? WHERE id = ?", 
-                       (target_amount, existing_goal_id[0]))
-    else:
-        return jsonify({"error": "Error goal does not exist."}), 400
-    
+        cursor.execute("UPDATE SavingsGoal SET name = ?, target_amount = ? WHERE id = ?", 
+                       (goal_name, target_amount, existing_goal_id[0]))
+    else:    
         # If no goal exists, create a new one and associate with the user
         cursor.execute("INSERT INTO SavingsGoal (name, target_amount) VALUES (?, ?)",
-                       ('Default Goal', target_amount))  # Adjust goal name as necessary
+                       (goal_name, target_amount))  # Adjust goal name as necessary
         goal_id = cursor.lastrowid
         cursor.execute("UPDATE User SET goal_id = ? WHERE id = ?", (goal_id, user_id))
 
@@ -69,8 +71,8 @@ def set_goal_amount():
 
     return redirect("/progress")
 
-@app.route('/set_goal_name/', methods=['POST'])
-def set_goal_name():
+@app.route('/add_contribution', methods=['POST'])
+def add_contribution():
     # Ensure the user is logged in
     if 'user' not in session:
         return jsonify({"error": "You must be logged in to set a goal."}), 400
@@ -84,33 +86,29 @@ def set_goal_name():
     cursor.execute("SELECT id FROM User WHERE username = ?", (user_name,))
     user_id = cursor.fetchone()['id']
     print(user_id)
-
-    # Get the new target amount from the request
-    goal_name = request.form.get('goal_name')
-
-    # Check if the user already has an associated goal
-    cursor.execute("SELECT goal_id FROM User WHERE id = ?", (user_id,))
-    existing_goal_id = cursor.fetchone()
-    print(user_id)
-
-    if existing_goal_id and existing_goal_id[0]:
-        # If a goal already exists, update it
-        cursor.execute("UPDATE SavingsGoal SET name = ? WHERE id = ?", 
-                       (goal_name, existing_goal_id[0]))
-    else:
-        return jsonify({"error": "Error goal does not exist."}), 400
     
-        # If no goal exists, create a new one and associate with the user
-        cursor.execute("INSERT INTO SavingsGoal (name, target_amount) VALUES (?, ?)",
-                       ('Default Goal', target_amount))  # Adjust goal name as necessary
-        goal_id = cursor.lastrowid
-        cursor.execute("UPDATE User SET goal_id = ? WHERE id = ?", (goal_id, user_id))
+    # Get the new contribution amount from the request
+    contribution_amount = request.form.get('contribution_amount')
 
+    if not contribution_amount or float(contribution_amount) <= 0:
+        return jsonify({"error": "Please provide a valid contribution amount."}), 400
+
+    contribution_amount = float(contribution_amount)
+
+    # Get new date for this contribution
+    current_date = datetime.now()
+
+    # Create a new goal and associate with the user
+    cursor.execute("INSERT INTO Contribution (user_id, amount, date) VALUES (?, ?, ?)",
+                    (user_id, contribution_amount, current_date))  # Adjust goal name as necessary
+    
     # Commit changes and close connection
     conn.commit()
     conn.close()
 
     return redirect("/progress")
+
+
 
 @app.route('/savings/', methods=['GET'])
 def get_savings_by_user():
