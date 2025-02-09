@@ -236,68 +236,6 @@ header {
     color: #ffbd84; /* Highlight the name/title */
 }
 
-
-/* Login Section */
-.login-section {
-    display: flex;
-    flex-direction: column; /* Align items vertically */
-    align-items: center; /* Center horizontally */
-    justify-content: center; /* Center vertically */
-    height: 75vh; /* Or adjust as needed */
-    padding: 2rem;
-    background-color: #f9f9fb; /* Match your main background */
-}
-
-.login-section h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #333; /* Match your main text color */
-}
-
-.login-section form {
-    display: flex;
-    flex-direction: column;
-    width: 300px; /* Adjust width as needed */
-    gap: 1rem; /* Space between form elements */
-}
-
-.login-section input {
-    padding: 0.8rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-.login-section button {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #fff;
-    background-color: #1b1b4b; /* Match your button color */
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.login-section button:hover {
-    background-color: #333;
-    color: #ff7b54;
-}
-
-.login-section p {
-    margin-top: 1rem;
-    color: #333;
-}
-
-.login-section a {
-    color: #8c52ff; /* Match your link color */
-    text-decoration: none;
-}
-
-.login-section a:hover {
-    text-decoration: underline;
-}
 /* Footer */
 footer {
     background-color: #1b1b4b;
