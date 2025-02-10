@@ -1,56 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SaveSmart - Savings Progress</title>
-    <link rel="stylesheet" href="styles.css"> </head>
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        main {
+            margin: auto 5em;
+        }
 
+        .user-progress {
+            margin: 2rem 0;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            height: 30px;
+            margin-bottom: 20px;
+        }
+        .progress-goal {
+            display: block; 
+            white-space: nowrap; 
+            font-size: larger;
+        }
+        .username {
+            font-weight: bold;
+        }
+
+        .popup {
+            top: 100%;
+            background: white; /* Gradient background */
+            color: black;
+            border: 1px solid #ff914d;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            margin-top: 10px;
+            z-index: 10;
+        }
+
+        .popup input {
+            padding: 8px;
+            border-radius: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .popup label {
+            white-space: nowrap;
+        }
+
+        .popup button {
+            white-space: nowrap;
+            width: auto;
+            text-align: center;
+        }
+
+        .popup form {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            width: 100%;
+            gap: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .contribution-form {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .contribution-form input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .contribution-form button {
+            white-space: nowrap;
+            width: auto;
+            text-align: center;
+        }
+    </style>
+</head>
 <body>
     <header>
         <nav class="navbar">
-            <a href="index.html" class="logo">SaveSmart</a>
+            <a href="/" class="logo">SaveSmart</a>
             <ul class="nav-links">
-                <li><a href="cart.html">Cart</a></li>
-                <li><a href="#">Progress</a></li>
-                <li><a href="#">Log Out</a></li>
+                <li><a href="faqs">FAQs</a></li>
+                <li><a href="login">Login</a></li>
+                <li><a href="progress">Progress</a></li>
+                <li><a href="cart" class="cart-icon">🛒</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <h1>Savings Progress</h1>
+        <h1>Dashboard</h1>
 
-    <!-- Global Stacked Progress Bar -->
-    <div class="global-progress-title">Total Savings Progress</div>
-
-    <div class="progress-and-goal-container">
-        <div id="global-progress-container" class="progress-container"></div>
-        <div id="global-progress-goal" class="progress-goal">Holiday Fund</div>
-    </div>
-
-    <form action="{{ url_for('set_savings_goal') }}" method="POST">
-        <label for="target_amount">New Savings Goal:</label> <!-- Set how much you are saving. --> 
-        <input type="number" id="target_amount" name="target_amount" min="0.01" step="0.01" required>
+        <!-- Global Stacked Progress Bar -->
+        <div class="global-progress-title">Total Savings Progress</div>
         
-        <button type="submit">Reset Savings</button>
-    </form>
-    
+        <div style="margin: 6rem 0;">
+            <div class="progress-and-goal-container">
+                <div id="global-progress-container" class="progress-container"></div>
+                <div id="global-progress-goal" class="progress-goal">Unspecified</div>
+                <div id="global-progress-code" class="share-code">Code</div>
+            </div>
 
-    <button>Update Savings Goal</button> <!-- Set what you are saving for -->
+            <div style="display: flex; justify-content: space-between;">
+                <div style="position: relative; display: inline-block;">
+                    <button id="set-goal-button" class="cta-btn">Set goal</button>
+                    <!-- Goal Popup (Initially Hidden) -->
+                    <div id="goal-popup" class="popup hidden" style="left: 0;">
+                        <form action="{{ url_for('set_goal') }}" method="POST">
+                            <label for="goal_name">Goal</label>
+                            <input type="text" id="goal_name" name="goal_name" required>
     
-    <h2>Individual Contributions</h2>
-    <div id="users-container"></div>
-    <script src="script.js"></script> </body>
+                            <label for="target_amount">Value (£)</label>
+                            <input type="number" id="target_amount" name="target_amount" min="0.01" step="0.01" required>
+
+                            <button class="cta-btn" type="submit">Save</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div style="position: relative; display: inline-block;">
+                    <button id="share-goal-button" class="cta-btn">Join goal</button>    
+                    <!-- Share Popup (Initially Hidden) -->
+                    <div id="share-popup" class="popup hidden" style="right: 0;">
+                        <form action="{{ url_for('share_goal') }}" method="POST">
+                            <label for="share-code">Code</label>
+                            <input type="number" id="share-code" name="share-code" min="0" step="1" required>
+
+                            <button class="cta-btn" type="submit">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+        <div class="global-progress-title">Individual Contributions</div>
+        <div id="users-container"></div>
+
+        <div id="contribution-form-container" class="contribution-form">
+            <form method="POST" action="{{ url_for('add_contribution') }}" class="contribution-form">
+                <label for="contribution_amount">Amount (£)</label>
+                <input type="number" id="contribution_amount" name="contribution_amount" min="0.01" step="0.01" required>
+        
+                <button class="cta-btn" type="submit">Add Contribution</button>
+            </form>
+        </div>        
+    </main>
 
     <footer>
         <p>&copy; 2025 SaveSmart. All Rights Reserved.</p>
         <ul class="footer-links">
-            <li><a href="faqs.html">FAQs</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="faqs">FAQs</a></li>
+            <li><a href="contact">Contact</a></li>
         </ul>
     </footer>
-</body>
 
+    <script defer>
+        function toggleSharePopup(){
+            const popup = document.getElementById("share-popup");
+            popup.classList.toggle("hidden");
+        }
+
+        document.getElementById("share-goal-button").onclick = toggleSharePopup;
+
+
+        function toggleGoalPopup() {
+            const popup = document.getElementById("goal-popup");
+            popup.classList.toggle("hidden");
+        }
+
+        document.getElementById("set-goal-button").onclick = toggleGoalPopup;
+
+        // Generate a consistent color for each user
+        function getUserColor(username) {
+            let hash = 0;
+            for (let i = 0; i < username.length; i++) {
+                hash = username.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const color = `hsl(${hash % 360}, 70%, 50%)`; // Unique color based on username
+            return color;
+        }
+
+        // Fetch savings data from the Flask backend
+        async function fetchSavingsData() {
+            try {
+                const response = await fetch('/savings');
+                const savingsData = await response.json();
+                displaySavingsProgress(savingsData);
+            } catch (error) {
+                console.error('Error fetching savings data:', error);
+            }
+        }
+
+        // Display savings progress for individual users and overall progress
+        function displaySavingsProgress(savingsData) {
+            const usersContainer = document.getElementById('users-container');
+            const globalProgressContainer = document.getElementById('global-progress-container');
+            
+            usersContainer.innerHTML = '';  // Clear previous content
+            globalProgressContainer.innerHTML = '';
+
+            let totalGoal = savingsData["goal"]["target_amount"]
+            let totalSaved = savingsData["users"].reduce((sum, user) => sum + user.saved_amount, 0);
+            console.log(savingsData);
+
+            document.getElementById("global-progress-code").textContent = savingsData["goal"]["id"];
+            // Global stacked progress bar (total savings)
+            if (totalSaved > 0) {
+                savingsData["users"].forEach(user => {
+                    if (user.saved_amount > 0) {
+                        const progressSegment = document.createElement('div');
+                        progressSegment.classList.add('progress-bar');
+                        progressSegment.style.width = `${(user.saved_amount / totalGoal) * 100}%`;
+                        progressSegment.style.backgroundColor = getUserColor(user.username);
+                        progressSegment.textContent = `£${user.saved_amount}`;
+                        globalProgressContainer.appendChild(progressSegment);
+                    }
+                });
+            } else {
+                globalProgressContainer.textContent = "No savings yet.";
+            }
+
+            document.getElementById("global-progress-goal").textContent = savingsData["goal"]["name"];
+
+            // Individual user progress bars
+            savingsData["users"].forEach(user => {
+                const userDiv = document.createElement('div');
+                userDiv.classList.add('user-progress');
+
+                const usernameDiv = document.createElement('div');
+                usernameDiv.classList.add('username');
+                usernameDiv.textContent = `${user.username} - Saved: £${user.saved_amount}`;
+
+                const progressAndGoalContainer = document.createElement('div');
+                progressAndGoalContainer.classList.add('progress-and-goal-container');
+
+                const progressContainer = document.createElement('div');
+                progressContainer.classList.add('progress-container');
+
+                const goalText = document.createElement('div');
+                goalText.textContent = savingsData["goal"]["name"];
+                goalText.classList.add("progress-goal");
+
+                if (user.saved_amount > 0) {
+                    user.contributions.forEach(contrib => {
+                        const progressBar = document.createElement('div');
+                        progressBar.classList.add('progress-bar');
+                        progressBar.style.width = `${(contrib.amount / totalGoal) * 100}%`;
+                        progressBar.style.backgroundColor = getUserColor(contrib.username);
+                        progressBar.textContent = `£${contrib.amount}`;
+                        progressContainer.appendChild(progressBar);
+                    });
+                } else {
+                    progressContainer.textContent = "No savings yet.";
+                }
+
+                progressAndGoalContainer.appendChild(progressContainer);
+                progressAndGoalContainer.appendChild(goalText);
+
+
+                userDiv.appendChild(usernameDiv);
+                userDiv.appendChild(progressAndGoalContainer);
+                usersContainer.appendChild(userDiv);
+            });
+        }
+
+        // Fetch savings data when the page loads
+        fetchSavingsData();
+    </script>
+</body>
 </html>
