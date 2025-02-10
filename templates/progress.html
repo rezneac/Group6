@@ -118,6 +118,7 @@
             <div class="progress-and-goal-container">
                 <div id="global-progress-container" class="progress-container"></div>
                 <div id="global-progress-goal" class="progress-goal">Unspecified</div>
+                <div id="global-progress-code" class="share-code">Code</div>
             </div>
 
             <div style="display: flex; justify-content: space-between;">
@@ -131,21 +132,21 @@
     
                             <label for="target_amount">Value (£)</label>
                             <input type="number" id="target_amount" name="target_amount" min="0.01" step="0.01" required>
-    
-                            <button class="cta-btn" type="submit">Save Goal</button>
+
+                            <button class="cta-btn" type="submit">Save</button>
                         </form>
                     </div>
                 </div>
                 
                 <div style="position: relative; display: inline-block;">
-                    <button id="share-goal-button" class="cta-btn">Share goal</button>    
+                    <button id="share-goal-button" class="cta-btn">Join goal</button>    
                     <!-- Share Popup (Initially Hidden) -->
                     <div id="share-popup" class="popup hidden" style="right: 0;">
-                        <form action="{{ url_for('set_goal') }}" method="POST">
-                            <label for="share_code">Code</label>
-                            <input type="number" id="share_code" name="share_code" min="0.01" step="0.01" required>
+                        <form action="{{ url_for('share_goal') }}" method="POST">
+                            <label for="share-code">Code</label>
+                            <input type="number" id="share-code" name="share-code" min="0" step="1" required>
 
-                            <button class="cta-btn" type="submit">Save Goal</button>
+                            <button class="cta-btn" type="submit">Save</button>
                         </form>
                     </div>
                 </div>
@@ -223,7 +224,7 @@
             let totalSaved = savingsData["users"].reduce((sum, user) => sum + user.saved_amount, 0);
             console.log(savingsData);
 
-            document.getElementById("share_code").value = savingsData["goal"]["id"];
+            document.getElementById("global-progress-code").textContent = savingsData["goal"]["id"];
             // Global stacked progress bar (total savings)
             if (totalSaved > 0) {
                 savingsData["users"].forEach(user => {

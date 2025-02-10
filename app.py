@@ -16,7 +16,7 @@ client = genai.GenerativeModel('gemini-2.0-flash')
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///savings.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'super_secret_key'  # Change this in production!
 app.config['file_extensions'] = ['.jpeg', '.jpg', '.png']
 
@@ -44,6 +44,10 @@ def register():
     password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
     new_user = User(username=username, email=email, password_hash=password_hash)
     db.session.add(new_user)
+    db.session.commit()
+
+    newcart = Cart()
+    db.session.add(newcart)
     db.session.commit()
 
     return jsonify({"message": "User registered successfully"}), 201
@@ -92,6 +96,28 @@ def set_goal():
         current_user.goal = new_goal
     
     db.session.commit()
+    return redirect("/progress")
+
+
+# Join forces with another person to contribute towards their goal as well.
+@app.route('/share_goal', methods=['POST'])
+@login_required
+def share_goal():
+    share_code = request.form.get('share-code')
+    
+    if not share_code:
+        return jsonify({"error": "Invalid share code."}), 400
+    
+    # Find the goal associated with the share code
+    shared_goal = SavingsGoal.query.filter_by(id=share_code).first()
+    
+    if not shared_goal:
+        return jsonify({"error": "Goal not found."}), 404
+    
+    # Update the current user's goal
+    current_user.goal = shared_goal
+    db.session.commit()
+    
     return redirect("/progress")
 
 @app.route('/add_contribution', methods=['POST'])
