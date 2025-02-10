@@ -1,0 +1,405 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Header */
+header {
+    background-color: #1b1b4b;
+    color: #fff;
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ff7b54;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+}
+
+.nav-links li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-links li a:hover {
+    background-color: #ff7b54;
+    color: #2b2b52;
+}
+
+.hamburger {
+    display: none;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+/* Hero Section */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 75vh; /* Or adjust as needed */
+    text-align: center;
+    background: linear-gradient(to right, #8c52ff, #ff914d); /* Gradient background */
+    color: #fff;
+    padding: 2rem;
+    /* Added overflow hidden */
+    overflow: hidden;
+}
+
+.hero-text {
+    max-width: 700px;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.hero h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.cta-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #1b1b4b;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.cta-btn:hover {
+    background-color: #333;
+    color: #ff7b54;
+}
+
+/* Progress Steps */
+.progress-steps {
+    text-align: center;
+    padding: 3rem;
+    background-color: #f9f9fb;
+}
+
+.steps-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.step {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    width: 200px;
+}
+
+.progress-btn {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    background-color: #8c52ff;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.progress-btn:hover {
+    background-color: #ff7b54;
+}
+
+.features {
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(to right, #8c52ff, #ff914d); /* Keep the gradient */
+    color: #fff; /* Ensure text is white for contrast */
+}
+
+.features-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 0; /* Removed negative margin */
+    padding: 2rem; /* Added padding to the container */
+}
+
+.feature-card {
+    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribute space between elements */
+    align-items: center; /* Center horizontally */
+    padding: 2rem; /* Add padding to the card content */
+    text-align: center; /* Center text within the card */
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.feature-card img {
+    width: 150px; /* Adjust image size */
+    height: 150px;
+    object-fit: contain; /* Make sure the image fits within the container */
+    margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+    margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+    flex-grow: 1; /* Allow the paragraph to take up available space */
+}
+
+/* Testimonials */
+.testimonials {
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(to right, #8c52ff, #ff914d);
+    background-color: #f9f9fb;
+    color: #333; /* Changed text color */
+}
+
+.testimonial-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.testimonial {
+    background-color: #fff; /* Changed background color */
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 30%;
+    min-width: 300px;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.testimonial:hover {
+    transform: translateY(-5px); /* Lift up on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+}
+
+.testimonial p {
+    font-style: italic;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.testimonial h4 {
+    font-weight: bold;
+    color: #ffbd84; /* Highlight the name/title */
+}
+
+/* Footer */
+footer {
+    background-color: #1b1b4b;
+    color: #fff;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    list-style: none;
+    margin-top: 1rem;
+}
+
+.footer-links li a {
+    color: #ff7b54;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links li a:hover {
+    color: #fff;
+}
+/* login page */
+loginmain{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #8c52ff, #ff914d);
+}
+.form{
+    width: 420px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(50px);
+    color: #fbf8f8;
+    border-radius: 12px;
+    padding: 30px 40px;
+  }
+  .form h1{
+    font-size: 36px;
+    text-align: center;
+  }
+  .form .input-box{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+  }
+  .input-box input{
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 2px solid rgba(255, 255, 255, .2);
+    border-radius: 40px;
+    font-size: 16px;
+    color: #f6f1f1;
+    padding: 20px 45px 20px 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  }
+  .input-box input::placeholder{
+    color: #f4efef;
+  }
+  .input-box i{
+    position: absolute;
+    right: 20px;
+    top: 30%;
+    transform: translate(-50%);
+    font-size: 20px;
+  }
+  .form .btn{
+    width: 100%;
+    height: 45px;
+    background: #fff;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+  }
+  .form .register-link{
+    font-size: 14.5px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  .register-link p a{
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .register-link p a:hover{
+    text-decoration: underline;
+  }
+/* Progress Bar Styling */
+.global-progress-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1b1b4b;
+    margin-bottom: 1rem;
+}
+
+.progress-and-goal-container {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.progress-container {
+    flex-grow: 1;
+    width: 80%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 50%; /* Adjust this dynamically with JS */
+    background: linear-gradient(to right, #8c52ff, #ff914d);
+    transition: width 0.5s ease-in-out;
+}
+
+.progress-goal {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ff7b54;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero h2 {
+        font-size: 1.4rem;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+        display: none;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .hamburger {
+        display: block;
+    }
+}

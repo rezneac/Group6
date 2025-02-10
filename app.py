@@ -2,13 +2,14 @@ import base64
 from datetime import datetime
 from google import genai
 from google.genai import types
+import hashlib
 
 client = genai.Client(api_key="API_KEY")
 
 import json
 import PIL.Image
 
-from flask import Flask, render_template, url_for, redirect, request
+from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -16,10 +17,11 @@ from wtforms import StringField, PasswordField, SubmitField, validators, TextAre
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 import os
+from sqlalchemy.orm import joinedload
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.db'
 app.config['SECRET_KEY'] = 'secretkey'
 app.config['file_extensions'] = ['.jpeg', '.jpg', '.png']
 
@@ -37,13 +39,14 @@ def loaduser(user_id):
 
 with app.app_context():
     dbs.create_all()
+    
 
 
 class User(dbs.Model, UserMixin):
     id = dbs.Column(dbs.Integer, primary_key=True)
     username = dbs.Column(dbs.String(20), nullable=False, unique=True)
     password = dbs.Column(dbs.String(80), nullable=False)
-    contributions = dbs.relationship('Contribution')
+    contributions = dbs.relationship('Contribution', backref='user', lazy='dynamic')
 
 
 class Item(dbs.Model, UserMixin):
@@ -58,7 +61,7 @@ class Contribution(dbs.Model, UserMixin):
     id = dbs.Column(dbs.Integer, primary_key=True)
     amount = dbs.Column(dbs.Integer, nullable=False)
     user_id = dbs.Column(dbs.Integer, dbs.ForeignKey('user.id'), nullable=False)
-
+    savings_id = dbs.Column(dbs.Integer, dbs.ForeignKey('savings.id'), nullable=False)
 
 
 class Savings(dbs.Model, UserMixin):
@@ -66,22 +69,16 @@ class Savings(dbs.Model, UserMixin):
     hash = dbs.Column(dbs.String(50), nullable=False)
     name = dbs.Column(dbs.String(50), nullable=False)
     savingsGoal = dbs.Column(dbs.Integer, nullable=False)
-    contributions = dbs.relationship('contribution', lazy='dynamic')
+    contributions = dbs.relationship('Contribution', backref='savings', lazy='dynamic')
 
 
 class Cart(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
-    items = dbs.relationship('item', lazy='dynamic')
+    items = dbs.relationship('Item', lazy='dynamic')
 
 
 with app.app_context():
     dbs.create_all()
-
-
-class commentform(FlaskForm):
-    comment = StringField(validators=[InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Comment..."})
-    postid = StringField()
-    submit = SubmitField("comment")
 
 
 class Registerform(FlaskForm):
@@ -94,7 +91,7 @@ class Registerform(FlaskForm):
         existingusername = User.query.filter_by(username=username.data).first()
 
         if existingusername:
-            raise ValidationError("username already exist you cant use this soz")
+            raise ValidationError("username already exist you cant use this")
 
 
 class Loginform(FlaskForm):
@@ -114,15 +111,20 @@ def home():
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     form = Registerform()
-    contribution = Contribution()
 
     if form.validate_on_submit():
-        hashedpassword = bcrypt.generate_password_hash(form.password.data)
+        existing_user = User.query.filter_by(username=form.username.data).first()
+        if existing_user:
+            flash('Username already exists. Please choose a different username.', 'danger')
+            return redirect(url_for('signup'))
 
-        newuser = User(username=form.username.data, password=hashedpassword , contributions=[contribution])
-        newcart = Cart()
+        hashedpassword = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+
+        newuser = User(username=form.username.data, password=hashedpassword)
         dbs.session.add(newuser)
         dbs.session.commit()
+
+        newcart = Cart()
         dbs.session.add(newcart)
         dbs.session.commit()
         return redirect(url_for('login'))
@@ -176,37 +178,61 @@ def shoppinglist():
 
 @app.route("/dashboard", methods=['GET', 'POST'])
 #@login_required
-def savings():
-    obj = Savings.query.filter_by(Savings.contributions.contains(User.contributions)).order_by(Savings.name).all()# Initialize obj to an empty dictionary
+def dashboard():
+    savings = Savings.query.join(Contribution).filter(Contribution.user_id == current_user.id).order_by(Savings.name).all()# Assuming you want to filter Savings based on contributions made by the current user
 
 
-    return render_template("receipt.html", obj=obj, saved=saved)
-@app.route("/dashboard", methods=['GET', 'POST'])
-#@login_required
-def newsavings():
-    obj = {}  # Initialize obj to an empty dictionary
+    return render_template("progress1.html", objs=savings)
 
-    return render_template("receipt.html", obj=obj, saved=saved)
+@app.route("/set_goal", methods=['GET', 'POST'])
+@login_required
+def set_goal():
+    if request.method == 'POST':
+        name = request.form.get('goal_name')
+        goal = request.form.get('target_amount')
+        initial = request.form.get('initial_contribution')
 
-@app.route("/dashboard", methods=['GET', 'POST'])
+        # Create the Savings instance without the hash
+        new_savings = Savings(name=name, hash='', savingsGoal=goal)
+        print(new_savings)
+        print(new_savings)
+        print(new_savings)
+        dbs.session.add(new_savings)
+        dbs.session.commit()
+
+        # Update the hash attribute with the MD5 hash of the id
+        new_savings.hash = hashlib.md5(str(new_savings.id).encode()).hexdigest()
+        dbs.session.commit()
+
+        # Create the Contribution instance
+        contribution = Contribution(amount=initial, user_id=current_user.id, savings_id=new_savings.id)
+        dbs.session.add(contribution)
+        dbs.session.commit()
+
+        return redirect(url_for('dashboard'))
+    savings = Savings.query.join(Contribution).filter(Contribution.user_id == current_user.id).order_by(Savings.name).all()
+
+    return render_template("progress1.html", objs=savings)
+
+@app.route("/addfriendsavings", methods=['GET', 'POST'])
 #@login_required
 def addfriendsavings():
-    obj = {}  # Initialize obj to an empty dictionary
+    savings = Savings.query.join(Contribution).filter(Contribution.user_id == current_user.id).order_by(Savings.name).all()# Assuming you want to filter Savings based on contributions made by the current user  # Initialize obj to an empty dictionary
 
-    return render_template("receipt.html", obj=obj, saved=saved)
+    return render_template("progress1.html", objs=savings)
 @app.route("/dashboard", methods=['GET', 'POST'])
 #@login_required
 def deletesavings():
-    obj = {}  # Initialize obj to an empty dictionary
+    savings = Savings.query.join(Contribution).filter(Contribution.user_id == current_user.id).order_by(Savings.name).all()# Assuming you want to filter Savings based on contributions made by the current user  # Initialize obj to an empty dictionary
 
-    return render_template("receipt.html", obj=obj, saved=saved)
+    return render_template("progress1.html", objs=savings)
 
-@app.route("/dashboard", methods=['GET', 'POST'])
+@app.route("/add_contribution", methods=['GET', 'POST'])
 #@login_required
-def contribute():
-    obj = {}  # Initialize obj to an empty dictionary
+def add_contribution():
+    savings = Savings.query.join(Contribution).filter(Contribution.user_id == current_user.id).order_by(Savings.name).all()# Assuming you want to filter Savings based on contributions made by the current user  # Initialize obj to an empty dictionary
 
-    return render_template("receipt.html", obj=obj, saved=saved)
+    return render_template("progress1.html", objs=savings)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -217,7 +243,7 @@ def login():
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
 
-                return redirect(url_for('index'))
+                return redirect(url_for('dashboard'))
     return render_template("login1.html", form=form)
 
 

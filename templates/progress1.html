@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SaveSmart - Savings Progress</title>
-    <link rel="stylesheet" href="hrthrtstatic/styles.css">
+    <link rel="stylesheet" href="static/styles1.css">
     <style>
         main {
             margin: auto 5em;
@@ -94,6 +94,8 @@
             text-align: center;
         }
     </style>
+    <!-- Add jQuery script tag -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <header>
@@ -115,10 +117,22 @@
         <div class="global-progress-title">Total Savings Progress</div>
         
         <div style="margin: 6rem 0;">
+            {% for obj in objs %}
+
             <div class="progress-and-goal-container">
                 <div id="global-progress-container" class="progress-container"></div>
-                <div id="global-progress-goal" class="progress-goal">Unspecified</div>
+                <div id="global-progress-goal" class="progress-goal">{{ obj.name }}</div>
+                <div id="share-code" class="share-code">{{ obj.hash }}</div>
             </div>
+            <div id="contribution-form-container" class="contribution-form">
+                <form method="POST" action="{{ url_for('add_contribution') }}" class="contribution-form">
+                    <label for="contribution_amount">Amount (£)</label>
+                    <input type="number" id="contribution_amount" name="contribution_amount" min="0.01" step="0.01" required>
+            
+                    <button class="cta-btn" type="submit">Add Contribution</button>
+                </form>
+            </div> 
+            {% endfor %}
 
             <div style="display: flex; justify-content: space-between;">
                 <div style="position: relative; display: inline-block;">
@@ -131,6 +145,9 @@
     
                             <label for="target_amount">Value (£)</label>
                             <input type="number" id="target_amount" name="target_amount" min="0.01" step="0.01" required>
+
+                            <label for="initial_contribution">Initial Contribution (£)</label>
+                            <input type="number" id="initial_contribution" name="initial_contribution" min="0.01" max="" step="0.01" required>
     
                             <button class="cta-btn" type="submit">Save Goal</button>
                         </form>
@@ -151,19 +168,7 @@
                 </div>
             </div>
         </div>
-
-       
-        <div class="global-progress-title">Individual Contributions</div>
-        <div id="users-container"></div>
-
-        <div id="contribution-form-container" class="contribution-form">
-            <form method="POST" action="{{ url_for('add_contribution') }}" class="contribution-form">
-                <label for="contribution_amount">Amount (£)</label>
-                <input type="number" id="contribution_amount" name="contribution_amount" min="0.01" step="0.01" required>
-        
-                <button class="cta-btn" type="submit">Add Contribution</button>
-            </form>
-        </div>        
+     
     </main>
 
     <footer>
@@ -174,17 +179,29 @@
         </ul>
     </footer>
 
+
+    
     <script defer>
         function toggleSharePopup(){
             const popup = document.getElementById("share-popup");
+            const popup2 = document.getElementById("goal-popup");
+            if (popup2.classList.contains("hidden") == false){
+                popup2.classList.toggle("hidden");
+            }
             popup.classList.toggle("hidden");
-        }
 
+        }
+        
+      
         document.getElementById("share-goal-button").onclick = toggleSharePopup;
 
 
         function toggleGoalPopup() {
             const popup = document.getElementById("goal-popup");
+            const popup2 = document.getElementById("share-popup");
+            if (popup2.classList.contains("hidden") == false){
+                popup2.classList.toggle("hidden");
+            }
             popup.classList.toggle("hidden");
         }
 
@@ -201,7 +218,7 @@
         }
 
         // Fetch savings data from the Flask backend
-        async function fetchSavingsData() {
+        /* async function fetchSavingsData() {
             try {
                 const response = await fetch('/savings');
                 const savingsData = await response.json();
@@ -209,10 +226,10 @@
             } catch (error) {
                 console.error('Error fetching savings data:', error);
             }
-        }
+        } */
 
         // Display savings progress for individual users and overall progress
-        function displaySavingsProgress(savingsData) {
+        /* function displaySavingsProgress(savingsData) {
             const usersContainer = document.getElementById('users-container');
             const globalProgressContainer = document.getElementById('global-progress-container');
             
@@ -285,7 +302,7 @@
         }
 
         // Fetch savings data when the page loads
-        fetchSavingsData();
+        fetchSavingsData(); */
     </script>
 </body>
 </html>
