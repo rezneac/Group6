@@ -6,7 +6,7 @@ from flask import Flask
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///savings.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'super_secret_key'  # Change this in production!
 db.init_app(app)
 
