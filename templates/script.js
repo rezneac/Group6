@@ -80,3 +80,4 @@ faqItems.forEach(item => {
         answer.style.maxHeight = item.classList.contains('active') ? answer.scrollHeight + 'px' : '0';
     });
 });
+

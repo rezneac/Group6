@@ -405,6 +405,80 @@ loginmain{
     color: #ff7b54;
 }
 
+/* General Page Styling */
+.faqs-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+/* Title Styling */
+.faqs-title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #007bff; /* Adjust color to match theme */
+}
+
+/* FAQ Section Styles */
+.faq-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #F9F5FF; /* Soft lavender background */
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* FAQ Headers */
+.faq-accordion-header {
+    background: linear-gradient(90deg, #6A0DAD, #FF7F50); /* Purple to Orange gradient */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.faq-accordion-header:hover {
+    filter: brightness(1.1);
+}
+
+/* Accordion Icons */
+.faq-accordion-icon {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* FAQ Content */
+.faq-accordion-content {
+    background: white;
+    color: #333;
+    font-size: 16px;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 5px;
+    display: none;
+    transition: max-height 0.3s ease-in-out;
+}
+
+/* Open State */
+.faq-accordion-content.open {
+    display: block;
+}
+
+/* Animation */
+.faq-accordion-header, .faq-accordion-content {
+    transition: 0.3s ease-in-out;
+}
+
 
 
 /* Responsive Design */

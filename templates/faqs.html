@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAQs - SaveSmart</title>
+    <title>SaveSmart FAQs</title>
     <link rel="stylesheet" href="static/styles.css">
 </head>
 <body>
@@ -11,28 +11,79 @@
         <nav class="navbar">
             <a href="/" class="logo">SaveSmart</a>
             <ul class="nav-links">
-                <li><a href="faqs">FAQs</a></li>
-                <li><a href="login">Login</a></li>
+                <li><a href="/faqs">FAQs</a></li>
+                <li><a href="/login">Login</a></li>
             </ul>
+            <div class="hamburger">☰</div>
         </nav>
     </header>
-
-    <main>
-        <section class="faqs">
-            <h2>Frequently Asked Questions</h2>
+    <section class="faq-section">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-container">
             <div class="faq-item">
-                <h3>How does SaveSmart help with organization?</h3>
-                <p>SaveSmart provides a streamlined way to store receipts, track expenses, and manage documents all in one place.</p>
+                <div class="faq-accordion-header" onclick="toggleFAQAccordion(this)">
+                    <span>How does SaveSmart help me manage my savings?</span>
+                    <span class="faq-accordion-icon">+</span>
+                </div>
+                <div class="faq-accordion-content">
+                    <p>SaveSmart provides budgeting tools, goal tracking, and insights to help you make the most of your savings.</p>
+                </div>
             </div>
+            
             <div class="faq-item">
-                <h3>Is SaveSmart free to use?</h3>
-                <p>Yes! SaveSmart offers a free basic version with premium features available for purchase.</p>
+                <div class="faq-accordion-header" onclick="toggleFAQAccordion(this)">
+                    <span>Is SaveSmart free to use?</span>
+                    <span class="faq-accordion-icon">+</span>
+                </div>
+                <div class="faq-accordion-content">
+                    <p>Yes! SaveSmart offers a free plan with essential features, while premium plans unlock advanced tools.</p>
+                </div>
             </div>
-        </section>
-    </main>
+            
+            <div class="faq-item">
+                <div class="faq-accordion-header" onclick="toggleFAQAccordion(this)">
+                    <span>Can I set up multiple savings goals?</span>
+                    <span class="faq-accordion-icon">+</span>
+                </div>
+                <div class="faq-accordion-content">
+                    <p>Absolutely! You can create and track multiple savings goals to keep your finances organized.</p>
+                </div>
+            </div>
+        </div>
 
+        
+        
+    </section>
     <footer>
         <p>&copy; 2025 SaveSmart. All Rights Reserved.</p>
+        <ul class="footer-links">
+            <li><a href="faqs">FAQs</a></li>
+            <li><a href="contact">Contact</a></li>
+        </ul>
     </footer>
+    <script>
+        function toggleFAQ(element) {
+            let content = element.nextElementSibling;
+            let icon = element.querySelector(".faq-accordion-icon");
+    
+            // Close all other FAQs
+            document.querySelectorAll(".faq-accordion-content").forEach((item) => {
+                if (item !== content) {
+                    item.style.maxHeight = null;
+                    item.previousElementSibling.querySelector(".faq-accordion-icon").textContent = "+";
+                }
+            });
+    
+            // Toggle the clicked FAQ
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                icon.textContent = "+";
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                icon.textContent = "−";
+            }
+        }
+    </script>
 </body>
 </html>
