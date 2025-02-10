@@ -173,6 +173,8 @@ def shoppinglist():
                 #newpost = Post(caption=caption, data=data,  pdata=current_user.pfp,
                 #             pname=current_user.username, postdate=datetime.now().replace(microsecond=0))
                 image = PIL.Image.open(uploadedfile)
+                image = image.convert("L")  # Convert to grayscale (reduces size)
+                image.thumbnail((1024, 1024))
 
                 response = client.generate_content(
                     contents=[
