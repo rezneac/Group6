@@ -551,6 +551,8 @@ loginmain{
     .readout, .alternatives {
         padding: 10px;
     }
+}
+
 /* Progress Bar Styling */
 .global-progress-title {
     text-align: center;
