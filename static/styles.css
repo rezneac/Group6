@@ -445,15 +445,18 @@ loginmain{
     text-decoration: underline;
   }
 /*receipt page*/
-/* Main Container */
+
 .receipt-container {
     width: 80%;
     max-width: 600px;
-    background: #ffffff;
+    border: 2px solid rgba(255, 255, 255, .2);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    color: #fbf8f8;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    padding: 20px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Header */
@@ -465,11 +468,14 @@ loginmain{
 
 /* Form Section */
 .receipt-form {
-    background: #fafafa;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     margin-bottom: 20px;
+    border: 2px solid rgba(255, 255, 255, .2);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    color: #fbf8f8;
+    width: 50%;
 }
 
 .receipt-form input[type="file"] {
@@ -479,7 +485,7 @@ loginmain{
 }
 
 .receipt-form input[type="submit"] {
-    width: 100%;
+    width: 50%;
     background: #007bff;
     color: white;
     border: none;
