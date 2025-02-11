@@ -19,7 +19,7 @@
         </nav>
     </header>
 
-    <receiptmain>
+    <div class="receipt-container">
         <h2>Receipts Scanner</h2>
         <p>Enter in your receipt</p>
         <div class="receipt-form">
@@ -29,7 +29,7 @@
             <input type="submit">
 
             </div>
-            <div class="main">
+            <div class="readout">
                 <h3>Your receipt readout</h3>
                 {% for item in obj.receipt_items %}
 
@@ -39,7 +39,7 @@
                 {% endfor %}
 
             </div>
-            <div class="main">
+            <div class="alternatives">
                 <h3>Alternatives</h3>
                 {% for item in obj.alternative_items %}
 
@@ -50,7 +50,7 @@
 
             </div>
         </section>
-    </receiptmain>
+    </div>
 
     <footer>
         <p>&copy; 2025 SaveSmart. All Rights Reserved.</p>
