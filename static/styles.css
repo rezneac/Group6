@@ -365,7 +365,7 @@ loginmain{
     background: transparent;
     border: 2px solid rgba(255, 255, 255, .2);
     backdrop-filter: blur(80px);
-    box-shadow: rgba(0, 0, 0, 0.626);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     color: #fbf8f8;
     border-radius: 12px;
     padding: 30px 40px;
@@ -481,92 +481,67 @@ loginmain{
     color: #ff7b54;
 }
 
-/* General Page Styling */
-.faqs-container {
-    max-width: 900px;
-    margin: auto;
-    padding: 20px;
-    font-family: 'Poppins', sans-serif;
-    color: #333;
-}
-
-/* Title Styling */
-.faqs-title {
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 20px;
-    color: #007bff; /* Adjust color to match theme */
-}
-
 /* FAQ Section Styles */
-.faq-section {
+
+.faq-container {
+    margin-top: 100px;;
     width: 80%;
-    max-width: 900px; /* Keeps it neat */
-    padding: 30px;
-    margin-top: 120px;
-    background: rgba(255, 255, 255, 0.1); /* Transparent effect */
+    max-width: 800px;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px); /* Frosted glass effect */
-    position: relative;
-    z-index: 2;
-}
-
-/* FAQ Headers */
-.faq-accordion-header {
-    background: linear-gradient(90deg, #6A0DAD, #FF7F50);
-    background-size: 200% 200%;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.3s ease-in-out;
-    animation: gradientAnimation 4s linear infinite;
-}
-/* Gradient Animation */
-@keyframes gradientAnimation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-.faq-accordion-header:hover {
-    filter: brightness(1.2);
-}
-
-/* Accordion Icons */
-.faq-accordion-icon {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-/* FAQ Content */
-.faq-accordion-content {
-    background: white;
+    padding: 20px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+  }
+  
+  .faq-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  /* Search Bar */
+  #searchBar {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 24px;
+    border: 1px solid #ccc;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.8);
     color: #333;
-    font-size: 16px;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 5px;
+    transition: box-shadow 0.2s ease;
+  }
+  /* FAQ Items */
+  .faq-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 0;
+    cursor: pointer;
+  }
+  
+  .faq-item:last-child {
+    border: none;
+  }
+  
+  .faq-question {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .faq-question:hover {
+    color: #f39c12;
+  }
+  
+  .faq-answer {
+    margin-top: 10px;
     display: none;
-    transition: max-height 0.3s ease-in-out;
-}
-/* Open State */
-.faq-accordion-content.open {
-    display: block;
-}
-
-/* Animation */
-.faq-accordion-header, .faq-accordion-content {
-    transition: 0.3s ease-in-out;
-}
-
-
+    font-size: 1rem;
+    line-height: 1.5;
+  }
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -590,5 +565,9 @@ loginmain{
 
     .hamburger {
         display: block;
+    }
+
+    .faq-section {
+        width: 90%; /* Adjust width for smaller screens */
     }
 }
