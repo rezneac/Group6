@@ -1,6 +1,13 @@
-# Save Smart
+# Save Smart by Group 6
 
 Plan smarter, spend happier with SaveSmart.
+
+## Group Members
+Ross Watts - rw360@student.le.ac.uk
+Emmanuel Ekhator - efe1@student.le.ac.uk
+Shreya Chudasama - sc973@student.le.ac.uk
+Anatolie Rezneac - ar684@student.le.ac.uk
+Neha Karia - nhk6@student.le.ac.uk
 
 ## Installation
 
