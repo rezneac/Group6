@@ -10,7 +10,7 @@ body {
     line-height: 1.6;
     font-family: 'Poppins', sans-serif;
     margin: 0;
-    padding: 0;
+    padding-top: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -29,7 +29,7 @@ header {
     background: rgba(0, 0, 0, 0.7); /* Semi-transparent for sleek look */
     backdrop-filter: blur(5px); /* Frosted effect */
     z-index: 100;
-    padding: 15px 0;
+    padding: 10px 20px;
 }
 
 .navbar {
@@ -86,7 +86,7 @@ header {
     color: #fff;
     padding: 2rem;
     /* Added overflow hidden */
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .hero-text {
@@ -143,11 +143,14 @@ header {
 }
 
 .main{
-    margin: 20px;
-    padding: 10px;
+    margin-top: 150px;
+    z-index: 1;
+    padding: 2rem;
     border-radius: 10px;
     background-color: #1b1b4b;
     color:white;
+    max-width: 900px;  /* Keeps content centered */
+    margin: auto;
 }
 
 .center{
@@ -170,6 +173,18 @@ header {
 
 .progress-btn:hover {
     background-color: #ff7b54;
+}
+button, input {
+    margin: 5px;
+    padding: 8px 12px;
+    border-radius: 5px;
+}
+.progress-bar span {
+    position: relative;
+    z-index: 2;
+    display: block;
+    text-align: center;
+    width: 100%;
 }
 
 /* Smooth Wave Section Divider */
@@ -430,6 +445,7 @@ loginmain{
     text-decoration: underline;
   }
 /* Progress Bar Styling */
+
 .global-progress-title {
     text-align: center;
     font-size: 1.5rem;
@@ -446,41 +462,44 @@ loginmain{
 }
 
 .progress-container {
+    max-width: 1000px;
+    margin: 10px auto;  
     flex-grow: 1;
-    width: 80%;
-    height: 20px;
-    background: rgba(255, 255, 255, 0.3);
-    width: 80%;
-    height: 20px;
+    width: 100%;
+    height: 25px;  /* Compromise between 20px & 30px */
     background: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    position: relative;
     position: relative;
 }
 
-
 .progress-bar {
     height: 100%;
-    width: 50%; /* Adjust this dynamically with JS */
-    background: linear-gradient(to right, #8c52ff, #ff914d);
-    transition: width 0.5s ease-in-out;
-    height: 100%;
-    width: 50%; /* Adjust this dynamically with JS */
+    width: 100%; /* Adjust this dynamically with JS */
     background: linear-gradient(to right, #8c52ff, #ff914d);
     transition: width 0.5s ease-in-out;
 }
 
 .progress-goal {
     font-size: 1.2rem;
-    font-size: 1.2rem;
     font-weight: bold;
     color: #ff7b54;
-    color: #ff7b54;
+    display: block; 
+    white-space: nowrap; 
 }
 
+.savings-box {
+    background: rgba(255, 255, 255, 0.2); /* Whiteish Transparent */
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    backdrop-filter: blur(10px); /* Glassmorphism Effect */
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+}
 /* FAQ Section Styles */
 
 .faq-container {
