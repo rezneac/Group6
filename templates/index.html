@@ -31,23 +31,23 @@
         </section>
 
         <section class="features">
-            <h2>How It Works</h2>
-            <div class="features-container">
-                <div class="feature-card">
-                    <img src="images/upload.jpg" alt="Upload">
-                    <h3>Upload Your Receipts</h3>
-                    <p>Snap a pic, upload, and let the savings begin!</p>
-                </div>
-                <div class="feature-card">
-                    <img src="images/suggestions.jpg" alt="Suggestions">
-                    <h3>Get Smart Suggestions</h3>
-                    <p>Discover cheaper alternatives and where to find them.</p>
-                </div>
-                <div class="feature-card">
-                    <img src="images/save.jpg" alt="Save">
-                    <h3>Save for Fun</h3>
-                    <p>Watch your savings grow and unlock guilt-free fun!</p>
-                </div>
+            <h2>how it workss</h2>
+            <div class="feature">
+                <div class="icon"><img src="your-icon1.svg" alt="Feature 1"></div>
+                <h3>Smart Budgeting</h3>
+                <p>Automate your savings with AI-powered budget tracking.</p>
+            </div>
+        
+            <div class="feature">
+                <div class="icon"><img src="your-icon2.svg" alt="Feature 2"></div>
+                <h3>Dynamic Insights</h3>
+                <p>Real-time analytics to keep your finances in check.</p>
+            </div>
+        
+            <div class="feature">
+                <div class="icon"><img src="your-icon3.svg" alt="Feature 3"></div>
+                <h3>Auto-Savings</h3>
+                <p>Round up spare change & grow your savings effortlessly.</p>
             </div>
         </section>
 
@@ -87,6 +87,18 @@
                 $('.nav-links').toggleClass('active');
             });
         });
+//features 
+        document.addEventListener("DOMContentLoaded", function() {
+    const featuresSection = document.querySelector(".features");
+    function revealFeatures() {
+        const rect = featuresSection.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.8) {
+            featuresSection.classList.add("reveal");
+        }
+    }
+    window.addEventListener("scroll", revealFeatures);
+    revealFeatures(); // Trigger on load
+});
     </script>
 </body>
 

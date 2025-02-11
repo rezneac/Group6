@@ -8,51 +8,65 @@
 
 body {
     line-height: 1.6;
-    color: #333;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(180deg, rgba(106, 13, 173, 0.9), rgba(255, 127, 80, 0.9)); /* Same as Hero */
+    color: white;
 }
 
 /* Header */
 header {
-    background-color: #1b1b4b;
-    color: #fff;
-    padding: 1rem 2rem;
-    position: sticky;
+    width: 100%;
+    position: fixed;
     top: 0;
-    z-index: 1000;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    left: 0;
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparent for sleek look */
+    backdrop-filter: blur(5px); /* Frosted effect */
+    z-index: 100;
+    padding: 15px 0;
 }
 
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 .logo {
-    font-size: 1.8rem;
+    font-size: 22px;
     font-weight: bold;
-    color: #ff7b54;
+    color: white;
     text-decoration: none;
 }
 
 .nav-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 20px;
     list-style: none;
 }
-
-.nav-links li a {
-    color: #fff;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    font-weight: 500;
+.nav-links li {
+    display: inline-block;
 }
 
-.nav-links li a:hover {
-    background-color: #ff7b54;
-    color: #2b2b52;
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #FF7F50; /* Soft orange hover effect */
 }
 
 .hamburger {
@@ -68,7 +82,7 @@ header {
     justify-content: center;
     height: 75vh; /* Or adjust as needed */
     text-align: center;
-    background: linear-gradient(to right, #8c52ff, #ff914d); /* Gradient background */
+    background: none;
     color: #fff;
     padding: 2rem;
     /* Added overflow hidden */
@@ -158,106 +172,167 @@ header {
     background-color: #ff7b54;
 }
 
+/* Smooth Wave Section Divider */
 .features {
-    text-align: center;
-    padding: 3rem;
-    background: linear-gradient(to right, #8c52ff, #ff914d); /* Keep the gradient */
-    color: #fff; /* Ensure text is white for contrast */
-}
-
-.features-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-top: 0; /* Removed negative margin */
-    padding: 2rem; /* Added padding to the container */
-}
-
-.feature-card {
-    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    background: none; /* Subtle transparency for depth */
+    backdrop-filter: blur(10px); /* Glass effect */
+    padding: 80px 10%;
+    border-radius: 30px; /* Soft, modern edges */
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Wavy Divider */
+.features::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: url('your-wave.svg') no-repeat center center/cover;
+}
+
+/* Feature Card Style */
+.feature {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Distribute space between elements */
-    align-items: center; /* Center horizontally */
-    padding: 2rem; /* Add padding to the card content */
-    text-align: center; /* Center text within the card */
+    align-items: center;
+    gap: 20px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.2); /* Translucent background */
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px); /* More depth */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    margin-bottom: 30px;
 }
 
-.feature-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+/* Hover Effect - Lifts Card & Adds Glow */
+.feature:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
-.feature-card img {
-    width: 150px; /* Adjust image size */
-    height: 150px;
-    object-fit: contain; /* Make sure the image fits within the container */
-    margin-bottom: 1rem;
+/* Icon Styling */
+.icon img {
+    width: 60px;
+    transition: transform 0.3s ease-in-out;
 }
 
-.feature-card h3 {
-    margin-bottom: 0.5rem;
+/* Subtle Icon Animation */
+.feature:hover .icon img {
+    transform: scale(1.1) rotate(5deg);
 }
 
-.feature-card p {
-    flex-grow: 1; /* Allow the paragraph to take up available space */
+/* Gradient Glow Effect */
+.feature h3 {
+    font-size: 22px;
+    background: linear-gradient(45deg, #ff8c00, #ff1e56);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* Testimonials */
+/* Smooth Scroll Animations */
+.feature {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.feature:nth-child(1) { transition-delay: 0.2s; }
+.feature:nth-child(2) { transition-delay: 0.4s; }
+.feature:nth-child(3) { transition-delay: 0.6s; }
+
+.reveal .feature {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* Testimonials Section */
 .testimonials {
+    padding: 60px 20px;
     text-align: center;
-    padding: 3rem;
-    background: linear-gradient(to right, #8c52ff, #ff914d);
-    background-color: #f9f9fb;
-    color: #333; /* Changed text color */
+    background: none;
+    color: white;
 }
 
+/* Title Styling */
+.testimonials h2 {
+    font-size: 2.5rem;
+    color: #ffcc70; /* Soft golden accent for contrast */
+    margin-bottom: 40px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Testimonial container */
 .testimonial-container {
-    max-width: 900px;
-    margin: 2rem auto;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 2rem;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
+/* Individual testimonial cards */
 .testimonial {
-    background-color: #fff; /* Changed background color */
-    padding: 2rem;
+    background: rgba(255, 255, 255, 0.15); /* Frosted glass effect */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 25px;
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 30%;
-    min-width: 300px;
-    text-align: left;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    width: 320px; /* Slightly wider for better readability */
+    min-height: 200px; /* Aligns cards properly */
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    backdrop-filter: blur(10px);
 }
 
+/* Hover effect */
 .testimonial:hover {
-    transform: translateY(-5px); /* Lift up on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
+/* Testimonial text */
 .testimonial p {
+    font-size: 1rem;
+    color: white;
+    line-height: 1.6;
     font-style: italic;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 15px;
+    font-weight: 500;
 }
 
+/* Name and university */
 .testimonial h4 {
-    font-weight: bold;
-    color: #ffbd84; /* Highlight the name/title */
+    font-weight: 600;
+    color: #ffd166; /* Warm yellow accent for a premium look */
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 10px;
 }
 
+/* Responsive Design */
+@media (max-width: 768px) {
+    .testimonial-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
 /* Footer */
 footer {
-    background-color: #1b1b4b;
-    color: #fff;
-    padding: 1.5rem;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
     text-align: center;
+    padding: 20px;
+    margin-top: auto;
 }
 
 .footer-links {
@@ -283,13 +358,14 @@ loginmain{
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(to right, #8c52ff, #ff914d);
+    background: none;
 }
 .form{
     width: 420px;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, .2);
-    backdrop-filter: blur(50px);
+    backdrop-filter: blur(80px);
+    box-shadow: rgba(0, 0, 0, 0.626);
     color: #fbf8f8;
     border-radius: 12px;
     padding: 30px 40px;
@@ -424,17 +500,22 @@ loginmain{
 
 /* FAQ Section Styles */
 .faq-section {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    background: #F9F5FF; /* Soft lavender background */
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 900px; /* Keeps it neat */
+    padding: 30px;
+    margin-top: 120px;
+    background: rgba(255, 255, 255, 0.1); /* Transparent effect */
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px); /* Frosted glass effect */
+    position: relative;
+    z-index: 2;
 }
 
 /* FAQ Headers */
 .faq-accordion-header {
-    background: linear-gradient(90deg, #6A0DAD, #FF7F50); /* Purple to Orange gradient */
+    background: linear-gradient(90deg, #6A0DAD, #FF7F50);
+    background-size: 200% 200%;
     color: white;
     font-size: 18px;
     font-weight: bold;
@@ -445,10 +526,17 @@ loginmain{
     justify-content: space-between;
     align-items: center;
     transition: all 0.3s ease-in-out;
+    animation: gradientAnimation 4s linear infinite;
+}
+/* Gradient Animation */
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .faq-accordion-header:hover {
-    filter: brightness(1.1);
+    filter: brightness(1.2);
 }
 
 /* Accordion Icons */
@@ -468,7 +556,6 @@ loginmain{
     display: none;
     transition: max-height 0.3s ease-in-out;
 }
-
 /* Open State */
 .faq-accordion-content.open {
     display: block;
